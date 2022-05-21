@@ -1,0 +1,129 @@
+Personal github access token
+-----------------------------
+ed-access-token
+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
+
+
+Settings -> Cross Settings
+---------------
+Prefix:
+arm-none-linux-gnueabihf-
+
+Path:
+/home/gdc419/gcc-linaro/bin
+
+Linker Options
+----------------
+
+-L/srv/nfs/rootfs/usr/lib -Wl,-rpath-link,/srv/nfs/rootfs/usr/lib -L/srv/nfs/rootfs/lib -Wl,-rpath-link,/srv/nfs/rootfs/lib
+
+-L/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/usr/lib -Wl,-rpath-link,/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/usr/lib -L/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/lib -Wl,-rpath-link,/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/lib
+
+
+Miscellanous Optimization Options
+------------------------------------
+
+-march=armv7-a -fno-tree-vectorize -mthumb-interwork -mfloat-abi=hard -mtune=cortex-a9 -Wno-poison-system-directories
+
+
+C/C++ -> Settings -> Build Steps -> Post Processing
+----------------------------------------------------
+
+Command:
+scp ~/Projects/fbtest/Debug/fbtest root@192.168.20.64:/home/root/
+scp ~/Projects/lv_port_linux_frame_buffer/Debug/lvglfb root@192.168.20.64:/home/root/
+
+Description:
+Copy fbtest Debug to Target
+Copy lvglfb Debug to Target
+
+
+Symbolic links
+-------------------
+ln -s longfilename target
+
+tar - unzip
+----------------
+tar xvf tarfilename
+
+
+To test input events
+---------------------
+Try typing the following at the terminal:
+
+cat /dev/input/event1
+
+Then move the input device (i.e. mouse) and you should see characters being streamed to the display if event1 is mapped to the mouse for example.
+
+You can test the event devices with the "evtest" utility.
+Type:
+evtest
+
+And you should get a list of available input devices.
+You will need to run at root, so you may need to ad sudo
+
+sudo evtest
+
+if not installed:
+sudo apt install evtest
+
+Display Resolution
+--------------------
+Can use:
+xrandr
+
+xrandr is an official configuration utility to the RandR (Resize and Rotate) X Window System extension.
+It can be used to set the size, orientation or reflection of the outputs for a screen.
+
+
+Check GPIO config
+--------------------
+cat /sys/kernel/debug/gpio
+
+tty
+------
+Type:
+tty
+to see what terminal you are
+
+Type:
+who
+to see all the terminals you are logged into
+
+
+Testing a serial port
+-----------------------
+Notes from:
+https://developer.toradex.com/getting-started/module-3-hardware-peripherals/basic-uart-usage-apalis-evaluation-board-apalis-imx6
+
+For testing UART2
+
+From a serial terminal connected to the module, configure the UART2 baud rate using the stty command. We will use a baud rate of 9600 baud:
+
+	stty -F /dev/ttymxc1 9600 -echo
+
+Use the cat command to listen for incoming data on the serial port:
+
+	cat < /dev/ttymxc1 &
+
+Write to the serial port. The characters sent will be printed back to you in the next line:
+
+	echo "Testing UART" > /dev/ttymxc1
+	
+Testing UART
+
+A UART loopback test can also be written in C.
+
+Termios, the Unix API for terminal I/O will be employed.
+
+An example will be introduced step-by-step. First of all, include some libraries and initialize variables:
+
+
+
+
+
+
+
+
+
+
