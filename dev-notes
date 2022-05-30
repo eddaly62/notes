@@ -166,8 +166,33 @@ desc, __LINE__, __FILE__, __FUNCTION__);}
 function(%s), line(%d)\n", strerror(errno), __FILE__, __FUNCTION__,__LINE__); \
 return RCODE;}}
 
+gdb debugger
+--------------
+break or b - set break point
+run or r - run program
+next or n - next (step to next c instruction
+s - step in
+n - next
+p 'n'- display, where 'n' is a variable name
+ref - display refresh (will use often)
+list - list source code
 
-	
+setting a break condition:
+break <filename.c>:<line number> <condition>
+break icorrupt.c:30 if(x>255)
+
+Can use a TUI in gdb
+TUI is a crude gdb GUI
+
+Type:
+layout next
+
+This will launch the TUI.
+It has several display formats, keep typing 'layout next' to cycle thru all the layouts
+
+Need to explore the 'target remote localhost:2000' on gdb...
+
+
 	
 
 
