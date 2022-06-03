@@ -176,10 +176,14 @@ n - next
 p 'n'- display, where 'n' is a variable name
 ref - display refresh (will use often)
 list - list source code
+x/16xb [address]- examine 16 bytes formated in hex starting at address.
+    x/16xb 0x555555556004
+    good for looking at a variable or structure in hex.
 
 setting a break condition:
 break <filename.c>:<line number> <condition>
 break icorrupt.c:30 if(x>255)
+break icorrupt.c:30 if x>255
 
 Can use a TUI in gdb
 TUI is a crude gdb GUI
@@ -191,6 +195,17 @@ This will launch the TUI.
 It has several display formats, keep typing 'layout next' to cycle thru all the layouts
 
 Need to explore the 'target remote localhost:2000' on gdb...
+
+stack
+---------
+internal variable to find out stack frame address
+__builtin_frame_address(0)
+
+
+Some TUI's that are open source
+-------------------------------
+- xdialog
+-Tcl/Tk
 
 
 	
