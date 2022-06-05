@@ -220,7 +220,19 @@ git rev-parse origin/master
 
 git rev-parse origin/master # to get the latest commit on the remote
 git rev-parse HEAD          # to get the latest commit on the local 
-	
+
+source
+-------
+Can use "source" to execute a text file that contains linux commands
+
+realative paths
+----------------
+Use realpath() function to get full path from a realitive path
+
+Unit test
+----------
+criterion
+
 
 
 
