@@ -229,9 +229,38 @@ realative paths
 ----------------
 Use realpath() function to get full path from a realitive path
 
-Unit test
-----------
-criterion
+Unit test utilities
+-------------------
+criterion *
+unity ?
+cmock
+ceedling
+minunit *
+
+Programming Fonts
+------------------
+Select a fixed width, no ligatures
+(i.e. arrow made of dashes and greater than looks like an arrow)
+
+Website to see what they look like:
+programmingfonts.org
+
+Jacob Sorber's top choices:
+Inconsolata
+sourcecodepro
+jet Brains Mono
+
+Files
+--------
+fstat() function to get file status
+mmap() to create a file in memory
+
+Ethernet
+---------
+curl for putting together ethernet coms that is "easy" to do
+Include <curl/curl.h> at the top of your file
+
+ifconfig
 
 sh script
 ------------
