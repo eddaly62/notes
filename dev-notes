@@ -233,6 +233,17 @@ Unit test
 ----------
 criterion
 
+sh script
+------------
+start with:
+#! /bin/bash
+
+put a .sh extension on it
+
+then make it executable
+chmod +x [filename]
+
+
 
 
 
