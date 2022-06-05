@@ -207,7 +207,19 @@ Some TUI's that are open source
 - xdialog
 -Tcl/Tk
 
+git
+------
 
+To get the current branch that you are on:
+git rev-parse --abbrev-ref HEAD
+
+To get the sha of what you checked out:
+some examples:
+git rev-parse development
+git rev-parse origin/master
+
+git rev-parse origin/master # to get the latest commit on the remote
+git rev-parse HEAD          # to get the latest commit on the local 
 	
 
 
