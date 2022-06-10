@@ -19,6 +19,7 @@ Linker Options
 
 -L/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/usr/lib -Wl,-rpath-link,/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/usr/lib -L/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/lib -Wl,-rpath-link,/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/lib
 
+-I<include pathe>
 
 Miscellanous Optimization Options
 ------------------------------------
@@ -109,7 +110,7 @@ Use the cat command to listen for incoming data on the serial port:
 Write to the serial port. The characters sent will be printed back to you in the next line:
 
 	echo "Testing UART" > /dev/ttymxc1
-	
+
 Testing UART
 
 A UART loopback test can also be written in C.
@@ -123,16 +124,16 @@ Graph - Dot
 --------------
 To install:
 	sudo apt install graphviz
-	
+
 website:
 	graphviz.org
-	
-	
+
+
 usage:
 	dot example.dot -Tpdf > example.pdf
-	
+
 Creates a pdf file, can also create a jpg or svg file
-	
+
 sample code:
 directional graph
 
@@ -151,20 +152,6 @@ graph {
 }
 
 
-ASSERT and FAIL_IF Macros
---------------------------
-#define ASSERT(cond, desc, serror) if( !(cond) )\
-{fprintf(stderr, "ASSERT error, %s, line %d, file(%s), function(%s), errno(%s)\n", \
-desc, __LINE__, __FILE__, __FUNCTION__, serror);}
-
-// TODO - add return and switch over?
-#define ASSERTNEW(cond, desc, serror) if( !(cond) )\
-{fprintf(stderr, "ASSERT error, %s, line %d, file(%s), function(%s)\n", \
-desc, __LINE__, __FILE__, __FUNCTION__);}
-
-#define FAIL_IF(EXP,RCODE) {if(EXP) {fprintf(stderr,"errno(%s), file(%s), \
-function(%s), line(%d)\n", strerror(errno), __FILE__, __FUNCTION__,__LINE__); \
-return RCODE;}}
 
 gdb debugger
 --------------
@@ -179,6 +166,10 @@ list - list source code
 x/16xb [address]- examine 16 bytes formated in hex starting at address.
     x/16xb 0x555555556004
     good for looking at a variable or structure in hex.
+
+To examine an array or variable in hex:
+
+p/x [array name]
 
 setting a break condition:
 break <filename.c>:<line number> <condition>
@@ -202,7 +193,7 @@ internal variable to find out stack frame address
 __builtin_frame_address(0)
 
 
-Some TUI's that are open source
+Some TUIs that are open source
 -------------------------------
 - xdialog
 -Tcl/Tk
@@ -249,7 +240,7 @@ Select a fixed width, no ligatures
 Website to see what they look like:
 programmingfonts.org
 
-Jacob Sorber's top choices:
+Jacob Sorber top choices:
 Inconsolata
 sourcecodepro
 jet Brains Mono
@@ -277,9 +268,45 @@ then make it executable
 chmod +x [filename]
 
 
+Inspecting Binaries
+--------------------
+
+To see all the strings in a program:
+strings <pgm>
+
+To see all the symbols:
+readelf --symbols <pgm>
+
+To see the symbol table:
+objdump -t <pgm>
+
+To see the section table:
+objdump -s <pgm>
+
+To disassemble the pgm:
+objdump -d <pgm>
+
+To see segment and sections:
+readelf --segments <pgm>
+
+To remove al the symbols from a pgm:
+strip <pgm>
 
 
+ASSERT and FAIL_IF Macros
+--------------------------
+#define ASSERT(cond, desc, serror) if( !(cond) )\
+{fprintf(stderr, "ASSERT error, %s, line %d, file(%s), function(%s), errno(%s)\n", \
+desc, __LINE__, __FILE__, __FUNCTION__, serror);}
 
+// TODO - add return and switch over?
+#define ASSERTNEW(cond, desc, serror) if( !(cond) )\
+{fprintf(stderr, "ASSERT error, %s, line %d, file(%s), function(%s)\n", \
+desc, __LINE__, __FILE__, __FUNCTION__);}
+
+#define FAIL_IF(EXP,RCODE) {if(EXP) {fprintf(stderr,"errno(%s), file(%s), \
+function(%s), line(%d)\n", strerror(errno), __FILE__, __FUNCTION__,__LINE__); \
+return RCODE;}}
 
 
 
