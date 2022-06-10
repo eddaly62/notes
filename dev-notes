@@ -310,6 +310,19 @@ To remove al the symbols from a pgm:
 strip <pgm>
 
 
+Wierd Warnings
+---------------
+PFNs busy [x]alloc_config_range
+
+This is sometimes displayed on the target.
+No bugs are caused that I can see.
+Google searched show people developing com and video apps see this sometimes
+Further searches indicate this is the cache or dma driver complaining to the kernel...to busy
+
+I was able to fix this by making some pointers that I was manipulating volatile
+This keeps these pointers from being cached. The warnings went away.
+
+
 ASSERT and FAIL_IF Macros
 --------------------------
 #define ASSERT(cond, desc, serror) if( !(cond) )\
