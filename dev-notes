@@ -203,6 +203,55 @@ That should make the connection
 
 sometimes r doesn't work, try using c instead
 
+For debugging forks and exec:
+type:
+set follow-fork-mode child
+set follow-fork-mode parent
+run
+
+set follow-exec-mode new
+run
+
+core dumps
+-----------
+
+ulimit -c
+see how much memory allcoated for a core dump file
+
+To change:
+ulimit -c unlimited
+
+Store it all.
+File is called core
+
+Use gdb to inspect
+gdb ./a core
+where ./a is the program name, core is a argument to gdb
+This will take you to the point were the program crashed when you type run
+Can use back trace or examine variable at time of crash.
+
+ssh
+----
+ssh keys are stored on your machine.
+ls -l .ssh
+
+Use:
+ssh-keygen
+to generate your own public key
+To copy your public key to a remote server
+ssh-copy id root@192.168.20.64 (target ip address)
+
+This renoved the need to enter a password to remote shell
+
+temp files
+-----------
+mkstemp() to make a temporary file
+mkdtemp() to make temporary directory
+
+hex editors
+------------
+ghex
+hexdump
 
 stack
 ---------
@@ -262,6 +311,12 @@ Inconsolata
 sourcecodepro
 jet Brains Mono
 
+File system in RAM
+-------------------
+Look at:
+mmap()
+memfd_create()
+
 Files
 --------
 fstat() function to get file status
@@ -308,6 +363,7 @@ readelf --segments <pgm>
 
 To remove al the symbols from a pgm:
 strip <pgm>
+
 
 
 Wierd Warnings
