@@ -369,6 +369,12 @@ To remove al the symbols from a pgm:
 strip <pgm>
 
 
+RE Regular Expressions
+----------------------
+
+RE generator:
+https://regex-generator.olafneumann.org
+
 
 Wierd Warnings
 ---------------
