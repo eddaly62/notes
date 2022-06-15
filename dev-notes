@@ -185,6 +185,10 @@ layout next
 This will launch the TUI.
 It has several display formats, keep typing 'layout next' to cycle thru all the layouts
 
+Can also select a tui by adding it to the command line:
+gdb-multiarch -tui <pgm>
+gdb -tui <pgm>
+
 Remote Debug:
 ssh into target in one terminal
 
@@ -239,7 +243,7 @@ Use:
 ssh-keygen
 to generate your own public key
 To copy your public key to a remote server
-ssh-copy id root@192.168.20.64 (target ip address)
+ssh-copy-id root@192.168.20.64 (target ip address)
 
 This renoved the need to enter a password to remote shell
 
@@ -282,8 +286,8 @@ dap repo:
 http://bitbucket.generaldigital.com:7990/projects/DAP/repos/dap/browse
 
 
-source
--------
+source (linux)
+----------------
 Can use "source" to execute a text file that contains linux commands
 
 realative paths
