@@ -377,9 +377,36 @@ https://regex-generator.olafneumann.org
 
 
 
-Abstract data tpes, making structs opaque
+Abstract data types, making structs opaque
+There contents can not be viewed or accessed by the app
+Essentialy they are made private
 ------------------------------------------
+Before:
 
+typedef struct {
+    ----
+    ----
+} queue;
+
+After:
+
+In header file, myq is never used but is needed (name of the struct)
+
+    typedef struct myq queue;
+
+In the source file. (myq is never used, but it is needed)
+
+    typedef struct myq  {
+        -----
+        -----
+    } queue;
+
+With this approach you can not dereference the struct or you will get a
+"dereferencing pointer to incomplete type" error.
+If you declare the struct in your app you may get a "invalid use of incomplete typedef" or a
+"do not know the size of..." errors.
+You will need to create get and set functions in your library to access the elements in the struct.
+Think pointer...
 
 Wierd Warnings
 ---------------
