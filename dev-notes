@@ -189,16 +189,16 @@ Can also select a tui by adding it to the command line:
 gdb-multiarch -tui <pgm>
 gdb -tui <pgm>
 
-Remote Debug:
+## Remote Debug:
 ssh into target in one terminal
 
-on target:
+### on target:
 gdbserver localhost:2001 <program>
 Note 2001 is the port number
 
-on the host:
+### on the host:
 gdb-multi-arch -q <program>
-Note: use full path for program, q flag is for quite
+NOTE: use FULL PATH for program, q flag is for quite
 
 Once you get the (gdb) prompt type:
 target remote 192.168.20.64:2001
@@ -331,11 +331,11 @@ Ethernet
 curl for putting together ethernet coms that is "easy" to do
 Include <curl/curl.h> at the top of your file
 
-ifconfig
+ifconfig to get ip address
 
 sh script
 ------------
-start with:
+start with the following on the first line:
 #! /bin/bash
 
 put a .sh extension on it
@@ -374,6 +374,11 @@ RE Regular Expressions
 
 RE generator:
 https://regex-generator.olafneumann.org
+
+
+
+Abstract data tpes, making structs opaque
+------------------------------------------
 
 
 Wierd Warnings
