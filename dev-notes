@@ -383,10 +383,10 @@ Essentialy they are made private
 ------------------------------------------
 Before:
 
-typedef struct {
-    ----
-    ----
-} queue;
+    typedef struct {
+        ----
+        ----
+    } queue;
 
 After:
 
