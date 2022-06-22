@@ -369,6 +369,16 @@ To remove al the symbols from a pgm:
 strip <pgm>
 
 
+Valgrind
+---------
+Tool to check if an program has a memory leak.
+Usage:
+
+valgrind <pgm>
+
+Start simple and can add various flags to test more
+
+
 RE Regular Expressions
 ----------------------
 
@@ -407,6 +417,17 @@ If you declare the struct in your app you may get a "invalid use of incomplete t
 "do not know the size of..." errors.
 You will need to create get and set functions in your library to access the elements in the struct.
 Think pointer...
+
+
+Markdown File Editors
+---------------------
+ghostwriter
+ReText
+
+Also various extensions are available for visual studio code.
+Markdown All in One - TOC feature
+Markdown PDF - creates a pdf file from your .md file
+
 
 Wierd Warnings
 ---------------
