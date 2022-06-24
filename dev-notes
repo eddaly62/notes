@@ -234,6 +234,26 @@ where ./a is the program name, core is a argument to gdb
 This will take you to the point were the program crashed when you type run
 Can use back trace or examine variable at time of crash.
 
+For ubuntu:
+
+core dumps are placed here:
+/var/crash/
+
+To enable Apport, run: sudo systemctl enable apport.service or sudo service apport start.
+
+To disable, run: sudo systemctl disable apport.service or sudo service apport stop in order to back to regular core dumping method.
+
+Apport is a serivice that gets the core dump
+
+To disable permanently, edit /etc/apport/crashdb.conf file and comment the following line:
+
+'problem_types': ['Bug', 'Package'],
+
+by adding a hash symbol (#) in the beginning of the line.
+
+Uncomment to restore
+
+
 ssh
 ----
 ssh keys are stored on your machine.
