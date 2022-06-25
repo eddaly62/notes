@@ -43,6 +43,28 @@ Symbolic links
 -------------------
 ln -s longfilename target
 
+To create symbolic links to all .txt files in ../allegro5 directory in the current directory:
+Switch to the directory that you want the links in.
+Then ln...
+
+cd src
+ln -sf ../allegro5/*.txt .
+
+(flags: s=symbolic link, f=force, over-write links if they exist)
+
+To remove all of the symbolic link files:
+Change to the directory that you want to clean and type:
+
+find -type l -delete
+
+Another way:
+
+find /usr/local/bin -lname '/usr/local/texlive/*' -delete
+
+This scans /usr/local/bin for links and deletes all links that point to /usr/local/texlive/*
+
+Can also use rm to remove the links.
+
 tar - unzip
 ----------------
 tar xvf tarfilename
