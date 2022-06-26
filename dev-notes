@@ -467,8 +467,11 @@ ghostwriter
 ReText
 
 Also various extensions are available for visual studio code.
-Markdown All in One - TOC feature
-Markdown PDF - creates a pdf file from your .md file
+
+  Markdown All in One - TOC feature
+  https://markdown-all-in-one.github.io/docs/guide/#features
+
+  Markdown PDF - creates a pdf file from your .md file
 
 
 Wierd Warnings
