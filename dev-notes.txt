@@ -26,6 +26,7 @@ Linker Options
 
 
 -l<shared library>
+
 for example:
 -lpthread translates to libpthread.so
 The compiler will search the paths given in the -L flags for the librarys specified with the -l option
@@ -55,6 +56,13 @@ Wl - are option is used to flag linker options, they are seperated by commas.
 
 The -R option embeds the path to the libraries path in the program, so it knows were to go find them...ie the path needs to exist and be valid on the target
 
+
+Miscellanous Optimization Options
+------------------------------------
+
+-march=armv7-a -fno-tree-vectorize -mthumb-interwork -mfloat-abi=hard -mtune=cortex-a9 -Wno-poison-system-directories
+
+
 Finding a library
 -----------------
 To find out where the library is, try this:
@@ -63,12 +71,14 @@ To find out where the library is, try this:
 
 (Replace libraryname with the name of your library)
 
-Miscellanous Optimization Options
-------------------------------------
 
--march=armv7-a -fno-tree-vectorize -mthumb-interwork -mfloat-abi=hard -mtune=cortex-a9 -Wno-poison-system-directories
+Building a shared library
+-------------------------
+Flags for gcc
 
+   -fPIC
 
+PIC = position independant code
 
 
 C/C++ -> Settings -> Build Steps -> Post Processing
@@ -460,9 +470,15 @@ Valgrind
 Tool to check if an program has a memory leak.
 Usage:
 
-valgrind <pgm>
+  valgrind <pgm>
 
 Start simple and can add various flags to test more
+
+
+System and Library Calls
+------------------------
+strace <pgm> - to see system calls of pgm
+ltrace <pgm> - to see library calls of pgm
 
 
 RE Regular Expressions
@@ -538,6 +554,52 @@ System fonts are usually located:
 
 FontSquirrel.com
 Good source of free fonts
+
+Programming Fonts
+------------------
+
+Mono-spaced fonts good for programming.
+Fixed width font
+Aides in alignment of brackets, etc.
+
+Check out:
+  programmingfonts.org
+
+Some popular choices:
+Inconsolata
+Sourcecodepro
+Jet Brains Mono
+
+Graphic Libraries
+------------------
+For linux:
+  Allegro
+  SDL
+  SFML
+
+Resource usage
+--------------
+This command displays all of the user executable processes
+    ps ux
+
+The VSZ column displays all the virtual memory space (shared librarys)
+
+RSS - resident set size
+
+/proc/ file system memory usage.
+Every process has there stats in the /proc/ folderCan use cat and grep to get data
+
+In a program you can use:
+    getrusage() - to get resource usage (memory and time up/idle).
+
+
+PCB Applications
+-----------------
+PCB design:
+    Altium
+    Eagle
+    KiCad
+    EasyEDA
 
 
 Record and Print Screen on Ubuntu
