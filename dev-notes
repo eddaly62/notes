@@ -3,6 +3,9 @@ Personal github access token
 ed-access-token
 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
 
+eddaly62
+Scout!2004
+
 
 Settings -> Cross Settings
 ---------------
@@ -19,12 +22,53 @@ Linker Options
 
 -L/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/usr/lib -Wl,-rpath-link,/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/usr/lib -L/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/lib -Wl,-rpath-link,/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/lib
 
--I<include pathe>
+-I<include path> - tells compiler were to seacrh for libraries after the standard paths are searched
+
+
+-l<shared library>
+for example:
+-lpthread translates to libpthread.so
+The compiler will search the paths given in the -L flags for the librarys specified with the -l option
+
+Now that your program compiles, it still may have a problem running.
+If it uses shared libraries that are not in commoninly searched path (/usr/lib, /lib) then you may get a "could not find library xxx error" when you run your program.
+
+There are two ways to fix this.
+
+1) set this enviroment variable, LD_LIBRARY_PATH, to the the path that your libraries are located. This is a short lived solution unless you add the setting to a script that gets run at start up
+
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/my_library/
+    export LD_LIBRARY_PATH
+
+If you go the $LD_LIBRARY_PATH route, you'll want to put that into your ~/.bashrc file so it will run every time you log in:
+
+   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/library
+
+
+2) Add the following to the gcc command line when you compile your program:
+
+   -Wl,-R/usr/local/lib
+
+The -Wl,-R part tells the resulting binary to also look for the library in /usr/local/lib at runtime before trying to use the one in /usr/lib/.
+
+Wl - are option is used to flag linker options, they are seperated by commas.
+
+The -R option embeds the path to the libraries path in the program, so it knows were to go find them...ie the path needs to exist and be valid on the target
+
+Finding a library
+-----------------
+To find out where the library is, try this:
+
+    sudo find / -iname *libraryname*.so*
+
+(Replace libraryname with the name of your library)
 
 Miscellanous Optimization Options
 ------------------------------------
 
 -march=armv7-a -fno-tree-vectorize -mthumb-interwork -mfloat-abi=hard -mtune=cortex-a9 -Wno-poison-system-directories
+
+
 
 
 C/C++ -> Settings -> Build Steps -> Post Processing
@@ -472,6 +516,42 @@ Also various extensions are available for visual studio code.
   https://markdown-all-in-one.github.io/docs/guide/#features
 
   Markdown PDF - creates a pdf file from your .md file
+
+  Markdown Lint - you need this one to correct your formatting mistakes!!!
+
+Table of contents - if your sub-headings have underscores in them, remove the underscores from the link field the filed with () brackets to make the links work.
+
+Fonts
+------
+To find all the fonts installed on your system type:
+    fc-list
+
+After installing a font you run this command to update the list for programs that check the 
+list of fonts available (i.e. gimp, libre, etc)
+
+    fc-cache
+
+System fonts are usually located:
+    /usr/share/fonts
+    /usr/local/share/fonts
+    or local in you home dir
+
+FontSquirrel.com
+Good source of free fonts
+
+
+Record and Print Screen on Ubuntu
+---------------------------------
+
+To start/stop recording:
+  cntrl + alt + shift + R
+You should see a yellow dot in the upper right corner of the display when recording
+The video will be stored in your Video folder
+
+To print the screen:
+  Fn + PrntScreen (key)
+The screen shot will be copied to your Picture folder
+
 
 
 Wierd Warnings
