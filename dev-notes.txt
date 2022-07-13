@@ -592,6 +592,10 @@ Every process has there stats in the /proc/ folderCan use cat and grep to get da
 In a program you can use:
     getrusage() - to get resource usage (memory and time up/idle).
 
+Another tool:
+    htop
+This is a much better version of top.
+
 
 PCB Applications
 -----------------
@@ -643,6 +647,23 @@ desc, __LINE__, __FILE__, __FUNCTION__);}
 #define FAIL_IF(EXP,RCODE) {if(EXP) {fprintf(stderr,"errno(%s), file(%s), \
 function(%s), line(%d)\n", strerror(errno), __FILE__, __FUNCTION__,__LINE__); \
 return RCODE;}}
+
+can also use:
+    assert(condition);
+
+remember to include assert.hard
+user the -DNDDebug flag to remove the assert for release versions
+the -D creates a preprocessor flag and NDebug is a preprocessor define that causes assert to not
+be part of the build
+
+indenting / formatters
+-----------------------
+
+linux app:
+    indent
+
+also:
+    clang-format
 
 
 
