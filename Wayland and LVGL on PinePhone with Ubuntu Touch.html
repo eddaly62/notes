@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <title>Wayland and LVGL on PinePhone with Ubuntu Touch</title>
+
+    
+    <!-- Begin scripts/articles/*-header.html: Article Header for Custom Markdown files processed by rustdoc, like chip8.md -->
+<meta property="og:title" content="Wayland and LVGL on PinePhone with Ubuntu Touch" data-rh="true">
+<meta property="og:description" content="Learn about Wayland and Ubuntu Touch on PinePhone... And how we build PinePhone Apps with LVGL" data-rh="true">
+<meta property="og:image" content="https://lupyuen.github.io/images/wayland-title-small.jpg">
+<meta property="og:type" content="article" data-rh="true">
+<!-- End scripts/articles/*-header.html -->
+<!-- Begin scripts/rustdoc-header.html: Header for Custom Markdown files processed by rustdoc, like chip8.md -->
+<link rel="alternate" type="application/rss+xml" title="RSS Feed for lupyuen" href="https://lupyuen.github.io/rss.xml">
+<link rel="stylesheet" type="text/css" href="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/normalize.css">
+<link rel="stylesheet" type="text/css" href="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/rustdoc.css" id="mainThemeStyle">
+<link rel="stylesheet" type="text/css" href="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/dark.css">
+<link rel="stylesheet" type="text/css" href="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/light.css" id="themeStyle">
+<link rel="stylesheet" type="text/css" href="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/prism.css">
+<script src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/storage.js"></script><noscript>
+<link rel="stylesheet" href="../noscript.css"></noscript>
+<link rel="shortcut icon" href="https://lupyuen.github.io/pinetime-rust-mynewt/favicon.ico">
+<style type="text/css">
+    #crate-search {
+        background-image: url("../down-arrow.svg");
+    }
+    a {
+        color: #77d;
+    }
+</style>
+<!-- End scripts/rustdoc-header.html -->
+
+
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+        <!-- Begin scripts/rustdoc-before.html: Pre-HTML for Custom Markdown files processed by rustdoc, like chip8.md -->
+
+    <!-- Begin Theme Picker -->
+    <div class="theme-picker" style="left: 0"><button id="theme-picker" aria-label="Pick another theme!"><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/brush.svg" alt="Pick another theme!" width="18"></button>
+        <div id="theme-choices"><button>dark</button><button>light</button></div>
+    </div>
+    <script src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/theme.js"></script>
+    <script src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/prism.js"></script>
+    <!-- Theme Picker -->
+
+    <!-- End scripts/rustdoc-before.html -->
+    
+
+    <h1 class="title">Wayland and LVGL on PinePhone with Ubuntu Touch</h1>
+    <nav id="TOC"><ul>
+<li><a href="#how-x11-works">1 How X11 works</a><ul></ul></li>
+<li><a href="#wayland-on-ubuntu-touch">2 Wayland on Ubuntu Touch</a><ul></ul></li>
+<li><a href="#render-opengl-graphics-with-wayland">3 Render OpenGL Graphics with Wayland</a><ul></ul></li>
+<li><a href="#get-egl-context-from-wayland">4 Get EGL Context from Wayland</a><ul></ul></li>
+<li><a href="#build-and-test-wayland-app-on-linux">5 Build and Test Wayland App on Linux</a><ul></ul></li>
+<li><a href="#fetch-wayland-interfaces">6 Fetch Wayland Interfaces</a><ul></ul></li>
+<li><a href="#render-opengl-bitmap-texture-with-wayland">7 Render OpenGL Bitmap Texture with Wayland</a><ul></ul></li>
+<li><a href="#lvgl-toolkit-for-graphical-user-interfaces">8 LVGL Toolkit for Graphical User Interfaces</a><ul></ul></li>
+<li><a href="#port-lvgl-to-wayland">9 Port LVGL to Wayland</a><ul></ul></li>
+<li><a href="#build-lvgl-on-pinephone-with-ubuntu-touch">10 Build LVGL on PinePhone with Ubuntu Touch</a><ul></ul></li>
+<li><a href="#inject-lvgl-into-file-manager-app">11 Inject LVGL into File Manager App</a><ul></ul></li>
+<li><a href="#run-lvgl-on-pinephone-with-ubuntu-touch">12 Run LVGL on PinePhone with Ubuntu Touch</a><ul></ul></li>
+<li><a href="#overcome-apparmor-security-on-ubuntu-touch">13 Overcome AppArmor Security on Ubuntu Touch</a><ul></ul></li>
+<li><a href="#what-i-like-about-ubuntu-touch-on-pinephone">14 What I like about Ubuntu Touch on PinePhone</a><ul>
+<li><a href="#ubports-on-ubuntu-touch-wayland-and-mir">14.1 UBports on Ubuntu Touch, Wayland and Mir</a><ul></ul></li>
+<li><a href="#gnome-and-gtk-on-wayland">14.2 GNOME and GTK on Wayland</a><ul></ul></li>
+<li><a href="#wayland-on-xfce">14.3 Wayland on Xfce</a><ul></ul></li></ul></li>
+<li><a href="#touch-input-for-lvgl-on-wayland">15 Touch Input for LVGL on Wayland</a><ul></ul></li>
+<li><a href="#whats-next">16 What's Next?</a><ul></ul></li>
+<li><a href="#configure-ssh-on-pinephone">17 Configure SSH on PinePhone</a><ul>
+<li><a href="#generate-ssh-keys">17.1 Generate SSH Keys</a><ul></ul></li>
+<li><a href="#install-ssh-keys">17.2 Install SSH Keys</a><ul></ul></li>
+<li><a href="#start-ssh-service">17.3 Start SSH Service</a><ul></ul></li></ul></li>
+<li><a href="#copy-files-from-microsd-card-on-pinephone">18 Copy Files from MicroSD Card on PinePhone</a><ul></ul></li>
+<li><a href="#build-and-test-lvgl-app-on-linux">19 Build and Test LVGL App on Linux</a><ul></ul></li></ul></nav><p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-title.jpg" alt="Work-in-progress LVGL GUI Framework ported to Wayland EGL on PinePhone with Ubuntu Touch"></p>
+<p><em>Work-in-progress LVGL GUI Framework ported to Wayland EGL on PinePhone with Ubuntu Touch</em></p>
+<p>📝 <em>25 Jul 2020</em></p>
+<p><strong>We ❤️ &nbsp; Old Underwear...</strong></p>
+<p>They feel comfy, they fit our contours. Nevermind the holes and the old stains 🤢</p>
+<p><strong>X11 is like Old Underwear.</strong> It's been around for 30 years... Yet we still use it in spite of its feature gaps and wonky quirks.</p>
+<p><a href="https://wiki.pine64.org/PinePhone"><strong>PinePhone on Ubuntu Touch feels like... New Underwear.</strong></a></p>
+<p>It runs Linux but it has none of the legacy X11 code. Because it's optimised for a great mobile experience with <strong>Wayland.</strong></p>
+<p>But New Underwear feels uncomfortable. So today we'll learn Wayland and understand how apps are built with Wayland.</p>
+<p>Hopefully someday we'll move on to newer, simpler app frameworks (like <a href="https://lvgl.io/">LVGL</a> and Flutter) as we discard our Old Underwear: X11, SDL, GTK, Qt, ...</p>
+<p>The source code for this article may be found here...</p>
+<ul>
+<li>
+<p><a href="https://github.com/lupyuen/lvgl-wayland"><code>github.com/lupyuen/lvgl-wayland</code></a></p>
+</li>
+<li>
+<p><a href="https://github.com/lupyuen/pinephone-mir"><code>github.com/lupyuen/pinephone-mir</code></a></p>
+</li>
+</ul>
+<h1 id="how-x11-works" class="section-header"><a href="#how-x11-works">1 How X11 works</a></h1>
+<p><a href="https://en.wikipedia.org/wiki/X_Window_System">X11</a> is the Graphical Display Service that runs on most Linux desktops and notebooks.</p>
+<p>Let's hunt for the X11 Service on Pinebook Pro...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-pinebook.png" alt="X11 Service on Pinebook Pro"></p>
+<p>That's the X11 Service... A <strong>2.2 MB</strong> executable named <strong><code>Xorg</code></strong>. </p>
+<p>The X11 Service controls the rendering of Linux apps (as well as the keyboard and mouse input) like this...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-x11.png" alt="X11 Architecture"></p>
+<p>(Adapted from <a href="https://wayland.freedesktop.org/architecture.html">"Wayland Architecture"</a>)</p>
+<ol>
+<li>
+<p>At the top we have the Linux programs running on our Linux machine: <strong>Terminal, Editor, Web Browser</strong>.</p>
+<p>Each program renders its graphical display and transmits the raw graphics to the X11 Service (via a local TCP socket).</p>
+</li>
+<li>
+<p>X11 Service forwards the rendered graphics to the <a href="https://en.wikipedia.org/wiki/Compositing_window_manager"><strong>Window Manager / Compositor</strong></a>.</p>
+<p>The Window Manager / Compositor is provided by the <strong>Desktop Environment</strong>: Xfce, KDE, Gnome, ...</p>
+</li>
+<li>
+<p>The Window Manager / Compositor wraps the rendered graphics into Display Windows and <strong>"decorates"</strong> them with scrollbars, title bar and minimise / maximise / close buttons.</p>
+<p>The Window Manager / Compositor then draws the Display Windows into a <strong>Screen Buffer</strong> according to their screen coordinates.</p>
+</li>
+<li>
+<p>The Screen Buffer is rendered to our screen by the X11 Service, talking to the <strong>Linux Display Driver</strong>.</p>
+</li>
+<li>
+<p>Any <strong>keyboard and mouse input</strong> is captured by the X11 Service, and forwarded to the programs.</p>
+</li>
+</ol>
+<p><em>Why is X11 so complex? So many hops?</em></p>
+<p>Because X11 was designed for Distributed Computing Systems.</p>
+<p>Here's how I used (abused?) X11R4 at <a href="http://srg.cs.illinois.edu/">UIUC Systems Research Group</a> way back in 1990 (30 years ago!)...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-uiuc.png" alt="Distributed X11 System"></p>
+<p>Thankfully things are a lot simpler now, lemme explain...</p>
+<h1 id="wayland-on-ubuntu-touch" class="section-header"><a href="#wayland-on-ubuntu-touch">2 Wayland on Ubuntu Touch</a></h1>
+<p><em>Do we need overlapping or tiled windows on PinePhone?</em></p>
+<p><em>Do we need to need to decorate PinePhone windows with a title bar and minimise / maximise / close buttons?</em></p>
+<p><em>Do we even need any windows on PinePhone?</em></p>
+<p>No! Because each PinePhone app takes control of the entire screen!</p>
+<p>PinePhone uses a simpler Graphical Display Service: the <a href="https://en.wikipedia.org/wiki/Wayland_(display_server_protocol)#Wayland_compositors"><strong>Wayland Compositor</strong></a>.</p>
+<p>Let's hunt for the Wayland Compositor on PinePhone...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-compositor.png" alt="Wayland Compositor on PinePhone"></p>
+<p>That's the Wayland Compositor... A <strong>262 KB</strong> executable named <code>unity-system-compositor</code>. </p>
+<p><em>Compare that with the 2.2 MB X11 Server on Pinebook Pro!</em></p>
+<p>Here's how the Wayland Compositor controls apps and touchscreen input on PinePhone with Ubuntu Touch...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-arch.png" alt="Wayland Architecture"></p>
+<p>(Adapted from <a href="https://wayland.freedesktop.org/architecture.html">"Wayland Architecture"</a> and <a href="https://en.wikipedia.org/wiki/EGL_(API)">"EGL API"</a>)</p>
+<ol>
+<li>
+<p>At the top we have the apps running on our phone: <strong>Terminal, Editor, Web Browser</strong>.</p>
+<p>Since each app runs fullscreen, only the active app will be rendered.</p>
+<p>When then app starts, it queries the <strong>Wayland Compositor</strong> for the graphical display interfaces available. (They talk via a <a href="https://en.wikipedia.org/wiki/Unix_file_types#Socket">Linux socket file</a>: <code>/run/user/32011/wayland-0</code>)</p>
+</li>
+<li>
+<p>Wayland Compositor returns the <a href="https://en.wikipedia.org/wiki/EGL_(API)"><strong>EGL Interface</strong></a> to the app.</p>
+</li>
+<li>
+<p>App calls the EGL Interface to <a href="https://en.wikipedia.org/wiki/OpenGL"><strong>render OpenGL graphics</strong></a> directly to the <strong>Linux Display Driver</strong>.</p>
+</li>
+<li>
+<p>Linux Display Driver forwards the OpenGL rendering commands to the <a href="https://en.wikipedia.org/wiki/Graphics_processing_unit"><strong>GPU to update the screen</strong></a>.</p>
+</li>
+<li>
+<p>Any <strong>touchscreen input</strong> is captured by the Wayland Compositor, and forwarded to the active app.</p>
+</li>
+</ol>
+<p>Wayland looks so much simpler and faster than X11!</p>
+<p><em>Wayland is designed for OpenGL and GPUs?</em></p>
+<p>Yes! And I lied about Wayland being New Underwear... Wayland is not really that New!</p>
+<p>Wayland was first released in 2008 (<a href="https://en.wikipedia.org/wiki/Wayland_(display_server_protocol)">11 years ago</a>)... Yet it was designed around OpenGL and GPUs, the same tech that powers our beautiful games today. (<a href="https://youtu.be/DNBk9hnPkTY">And websites too</a>)</p>
+<p>Read on to learn how to render our own OpenGL graphics with Wayland and Ubuntu Touch on PinePhone...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-egl.jpg" alt="Rendering a yellow rectangle with Wayland and OpenGL on PinePhone"></p>
+<p><em>Rendering a yellow rectangle with Wayland and OpenGL on PinePhone</em></p>
+<h1 id="render-opengl-graphics-with-wayland" class="section-header"><a href="#render-opengl-graphics-with-wayland">3 Render OpenGL Graphics with Wayland</a></h1>
+<p>Here's the function that calls OpenGL to render the yellow box above: <a href="https://github.com/lupyuen/pinephone-mir/blob/master/egl.c#L44-L60"><code>pinephone-mir/egl.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">/// Render the OpenGL ES2 display</span>
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">render_display</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//  Fill the rectangular region with yellow</span>
+    <span class="token function">glClearColor</span><span class="token punctuation">(</span>
+        <span class="token number">1.0</span><span class="token punctuation">,</span>  <span class="token comment">//  Red</span>
+        <span class="token number">1.0</span><span class="token punctuation">,</span>  <span class="token comment">//  Green</span>
+        <span class="token number">0.0</span><span class="token punctuation">,</span>  <span class="token comment">//  Blue</span>
+        <span class="token number">1.0</span>   <span class="token comment">//  Alpha</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glClear</span><span class="token punctuation">(</span>GL_COLOR_BUFFER_BIT<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// Render now</span>
+    <span class="token function">glFlush</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><code>render_display()</code> looks exactly like normal OpenGL, and it works on PinePhone with Wayland! (Thanks to Ubuntu Touch)</p>
+<p>Two things to note...</p>
+<ol>
+<li>
+<p>PinePhone supports a popular subset of OpenGL, known as <a href="https://en.wikipedia.org/wiki/OpenGL_ES"><strong>OpenGL for Embedded Systems</strong></a> Version 2.0.</p>
+<p>OpenGL ES is optimised for Embedded Devices. It's used by many mobile and console games today.</p>
+</li>
+<li>
+<p>To render OpenGL ES graphics, we need to get the <strong>OpenGL ES Context</strong> and <strong>Window Surface</strong> from Wayland</p>
+</li>
+</ol>
+<p>Before calling <code>render_display()</code>, we fetch the OpenGL Window Surface from Wayland like so: <a href="https://github.com/lupyuen/pinephone-mir/blob/master/egl.c#L167-L189"><code>pinephone-mir/egl.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">/// Dimensions of the OpenGL region to be rendered</span>
+<span class="token keyword">static</span> <span class="token keyword">int</span> WIDTH  <span class="token operator">=</span> <span class="token number">480</span><span class="token punctuation">;</span>
+<span class="token keyword">static</span> <span class="token keyword">int</span> HEIGHT <span class="token operator">=</span> <span class="token number">360</span><span class="token punctuation">;</span>
+
+<span class="token keyword">static</span> <span class="token keyword">struct</span> <span class="token class-name">wl_egl_window</span> <span class="token operator">*</span>egl_window<span class="token punctuation">;</span>  <span class="token comment">//  Wayland EGL Window</span>
+<span class="token keyword">static</span> EGLSurface egl_surface<span class="token punctuation">;</span>            <span class="token comment">//  EGL Surface</span>
+
+<span class="token comment">//  Create the EGL Window and render OpenGL graphics</span>
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">create_window</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//  Create an EGL Window from a Wayland Surface </span>
+    egl_window <span class="token operator">=</span> <span class="token function">wl_egl_window_create</span><span class="token punctuation">(</span>surface<span class="token punctuation">,</span> WIDTH<span class="token punctuation">,</span> HEIGHT<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>egl_window <span class="token operator">!=</span> EGL_NO_SURFACE<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to create OpenGL Window</span>
+
+    <span class="token comment">//  Create an OpenGL Window Surface for rendering</span>
+    egl_surface <span class="token operator">=</span> <span class="token function">eglCreateWindowSurface</span><span class="token punctuation">(</span>egl_display<span class="token punctuation">,</span> egl_conf<span class="token punctuation">,</span>
+        egl_window<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>egl_surface <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to create OpenGL Window Surface</span>
+
+    <span class="token comment">//  Set the current rendering surface</span>
+    EGLBoolean madeCurrent <span class="token operator">=</span> <span class="token function">eglMakeCurrent</span><span class="token punctuation">(</span>egl_display<span class="token punctuation">,</span> egl_surface<span class="token punctuation">,</span>
+        egl_surface<span class="token punctuation">,</span> egl_context<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>madeCurrent<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to set rendering surface</span>
+
+    <span class="token comment">//  Render the display</span>
+    <span class="token function">render_display</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Swap the display buffers to make the display visible</span>
+    EGLBoolean swappedBuffers <span class="token operator">=</span> <span class="token function">eglSwapBuffers</span><span class="token punctuation">(</span>egl_display<span class="token punctuation">,</span> egl_surface<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>swappedBuffers<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to swap display buffers</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>Functions named <code>wl_egl_...</code> are provided by the Wayland EGL Interface.  Functions named <code>egl...</code> come from the cross-platform <a href="https://docs.mesa3d.org/egl.html#:%7E:text=The%20main%20library%20(%20libEGL%20)%20is,directly%20dispatched%20to%20the%20drivers.">Mesa 3D Graphics Library</a>.</p>
+<p><em>EGL vs OpenGL... What's the difference?</em></p>
+<p>In Wayland, EGL is the Enabler for OpenGL. </p>
+<p>Wayland only understands EGL and it will gladly hand us EGL 
+objects... But it's up to us to transform EGL into OpenGL for rendering.</p>
+<p>Thus in the code above, we take a Wayland Surface <code>surface</code> and transform it into an EGL Window <code>egl_window</code>...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Create an EGL Window from a Wayland Surface </span>
+egl_window <span class="token operator">=</span> <span class="token function">wl_egl_window_create</span><span class="token punctuation">(</span>surface<span class="token punctuation">,</span> WIDTH<span class="token punctuation">,</span> HEIGHT<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>Then we create an OpenGL Window Surface <code>egl_surface</code> from that EGL Window...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Create an OpenGL Window Surface for rendering</span>
+egl_surface <span class="token operator">=</span> <span class="token function">eglCreateWindowSurface</span><span class="token punctuation">(</span>egl_display<span class="token punctuation">,</span> egl_conf<span class="token punctuation">,</span>
+    egl_window<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>And we begin the OpenGL rendering...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Set the current rendering surface</span>
+<span class="token function">eglMakeCurrent</span><span class="token punctuation">(</span>egl_display<span class="token punctuation">,</span> egl_surface<span class="token punctuation">,</span>
+    egl_surface<span class="token punctuation">,</span> egl_context<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">//  Render the display</span>
+<span class="token function">render_display</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">//  Swap the display buffers to make the display visible</span>
+<span class="token function">eglSwapBuffers</span><span class="token punctuation">(</span>egl_display<span class="token punctuation">,</span> egl_surface<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>Here's how we create a Wayland Region for OpenGL rendering: <a href="https://github.com/lupyuen/pinephone-mir/blob/master/egl.c#L103-L112"><code>pinephone-mir/egl.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token keyword">static</span> <span class="token keyword">struct</span> <span class="token class-name">wl_region</span> <span class="token operator">*</span>region<span class="token punctuation">;</span>  <span class="token comment">//  Wayland Region</span>
+
+<span class="token comment">//  Create the Wayland Region for rendering OpenGL graphics</span>
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">create_opaque_region</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//  Create a Wayland Region</span>
+    region <span class="token operator">=</span> <span class="token function">wl_compositor_create_region</span><span class="token punctuation">(</span>compositor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>region <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to create EGL Region</span>
+
+    <span class="token comment">//  Set the dimensions of the Wayland Region</span>
+    <span class="token function">wl_region_add</span><span class="token punctuation">(</span>region<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> WIDTH<span class="token punctuation">,</span> HEIGHT<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Add the Region to the Wayland Surface</span>
+    <span class="token function">wl_surface_set_opaque_region</span><span class="token punctuation">(</span>surface<span class="token punctuation">,</span> region<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>To learn more about EGL, check out <a href="https://jan.newmarch.name/Wayland/EGL/">"Programming Wayland Clients"</a></p>
+<p>The Wayland EGL code in this article was adapted from that document.</p>
+<h1 id="get-egl-context-from-wayland" class="section-header"><a href="#get-egl-context-from-wayland">4 Get EGL Context from Wayland</a></h1>
+<p>Earlier in <code>create_window()</code> we called an <strong>EGL Context</strong> <code>egl_context</code> to render OpenGL graphics.</p>
+<p>Here's how we get the EGL Context: <a href="https://github.com/lupyuen/pinephone-mir/blob/master/egl.c#L113-L165"><code>pinephone-mir/egl.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">/// Wayland EGL Interfaces for OpenGL Rendering</span>
+<span class="token keyword">static</span> EGLDisplay egl_display<span class="token punctuation">;</span>  <span class="token comment">//  EGL Display</span>
+<span class="token keyword">static</span> EGLConfig  egl_conf<span class="token punctuation">;</span>     <span class="token comment">//  EGL Configuration</span>
+<span class="token keyword">static</span> EGLContext egl_context<span class="token punctuation">;</span>  <span class="token comment">//  EGL Context</span>
+
+<span class="token comment">//  Create the EGL Context for rendering OpenGL graphics</span>
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">init_egl</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//  Attributes for our EGL Display</span>
+    EGLint config_attribs<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+        EGL_SURFACE_TYPE<span class="token punctuation">,</span>    EGL_WINDOW_BIT<span class="token punctuation">,</span>
+        EGL_RED_SIZE<span class="token punctuation">,</span>        <span class="token number">8</span><span class="token punctuation">,</span>
+        EGL_GREEN_SIZE<span class="token punctuation">,</span>      <span class="token number">8</span><span class="token punctuation">,</span>
+        EGL_BLUE_SIZE<span class="token punctuation">,</span>       <span class="token number">8</span><span class="token punctuation">,</span>
+        EGL_RENDERABLE_TYPE<span class="token punctuation">,</span> EGL_OPENGL_ES2_BIT<span class="token punctuation">,</span>
+        EGL_NONE
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token keyword">static</span> <span class="token keyword">const</span> EGLint context_attribs<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+        EGL_CONTEXT_CLIENT_VERSION<span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span>
+        EGL_NONE
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Get the EGL Display</span>
+    egl_display <span class="token operator">=</span> <span class="token function">eglGetDisplay</span><span class="token punctuation">(</span><span class="token punctuation">(</span>EGLNativeDisplayType<span class="token punctuation">)</span> display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>egl_display <span class="token operator">!=</span> EGL_NO_DISPLAY<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to get EGL Display</span>
+
+    <span class="token comment">//  Init the EGL Display</span>
+    EGLint major<span class="token punctuation">,</span> minor<span class="token punctuation">;</span>
+    EGLBoolean egl_init <span class="token operator">=</span> <span class="token function">eglInitialize</span><span class="token punctuation">(</span>egl_display<span class="token punctuation">,</span> <span class="token operator">&amp;</span>major<span class="token punctuation">,</span> <span class="token operator">&amp;</span>minor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>egl_init<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to init EGL Display</span>
+
+    <span class="token comment">//  Get the EGL Configurations</span>
+    EGLint count<span class="token punctuation">,</span> n<span class="token punctuation">;</span>
+    <span class="token function">eglGetConfigs</span><span class="token punctuation">(</span>egl_display<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>count<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    EGLConfig <span class="token operator">*</span>configs <span class="token operator">=</span> <span class="token function">calloc</span><span class="token punctuation">(</span>count<span class="token punctuation">,</span> <span class="token keyword">sizeof</span> <span class="token operator">*</span>configs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">eglChooseConfig</span><span class="token punctuation">(</span>egl_display<span class="token punctuation">,</span> config_attribs<span class="token punctuation">,</span>
+        configs<span class="token punctuation">,</span> count<span class="token punctuation">,</span> <span class="token operator">&amp;</span>n<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Choose the first EGL Configuration</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        EGLint size<span class="token punctuation">;</span>
+        <span class="token function">eglGetConfigAttrib</span><span class="token punctuation">(</span>egl_display<span class="token punctuation">,</span> configs<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> EGL_BUFFER_SIZE<span class="token punctuation">,</span> <span class="token operator">&amp;</span>size<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">eglGetConfigAttrib</span><span class="token punctuation">(</span>egl_display<span class="token punctuation">,</span> configs<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> EGL_RED_SIZE<span class="token punctuation">,</span> <span class="token operator">&amp;</span>size<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        egl_conf <span class="token operator">=</span> configs<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>egl_conf <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to get EGL Configuration</span>
+
+    <span class="token comment">//  Create the EGL Context based on the EGL Display and Configuration</span>
+    egl_context <span class="token operator">=</span> <span class="token function">eglCreateContext</span><span class="token punctuation">(</span>egl_display<span class="token punctuation">,</span> egl_conf<span class="token punctuation">,</span>
+        EGL_NO_CONTEXT<span class="token punctuation">,</span> context_attribs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>egl_context <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to create EGL Context</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><a href="https://jan.newmarch.name/Wayland/EGL/">More about EGL</a></p>
+<p>The above code in <code>init_egl()</code> creates the EGL Context. </p>
+<p>We call <code>init_egl()</code> in our Main Function like so: <a href="https://github.com/lupyuen/pinephone-mir/blob/master/egl.c#L64-L98"><code>pinephone-mir/egl.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">/// Wayland Interfaces</span>
+<span class="token keyword">static</span> <span class="token keyword">struct</span> <span class="token class-name">wl_surface</span>       <span class="token operator">*</span>surface<span class="token punctuation">;</span>       <span class="token comment">//  Wayland Surface</span>
+<span class="token keyword">static</span> <span class="token keyword">struct</span> <span class="token class-name">wl_shell_surface</span> <span class="token operator">*</span>shell_surface<span class="token punctuation">;</span> <span class="token comment">//  Wayland Shell Surface</span>
+
+<span class="token comment">/// Connect to Wayland Compositor and render OpenGL graphics</span>
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>argv<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//  Get interfaces for Wayland Compositor and Wayland Shell</span>
+    <span class="token function">get_server_references</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>display <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>     <span class="token comment">//  Failed to get Wayland Display</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>compositor <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to get Wayland Compositor</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>shell <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>       <span class="token comment">//  Failed to get Wayland Shell</span>
+
+    <span class="token comment">//  Create a Wayland Surface for rendering our app</span>
+    surface <span class="token operator">=</span> <span class="token function">wl_compositor_create_surface</span><span class="token punctuation">(</span>compositor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>surface <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to create Wayland Surface</span>
+
+    <span class="token comment">//  Get the Wayland Shell Surface for rendering our app window</span>
+    shell_surface <span class="token operator">=</span> <span class="token function">wl_shell_get_shell_surface</span><span class="token punctuation">(</span>shell<span class="token punctuation">,</span> surface<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>shell_surface <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Set the Shell Surface as top level</span>
+    <span class="token function">wl_shell_surface_set_toplevel</span><span class="token punctuation">(</span>shell_surface<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Create the Wayland Region for rendering OpenGL graphics</span>
+    <span class="token function">create_opaque_region</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Create the EGL Context for rendering OpenGL graphics</span>
+    <span class="token function">init_egl</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Create the EGL Window and render OpenGL graphics</span>
+    <span class="token function">create_window</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Handle all Wayland Events in the Event Loop</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token function">wl_display_dispatch</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+    <span class="token comment">//  Disconnect from the Wayland Display</span>
+    <span class="token function">wl_display_disconnect</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>In all Wayland apps, the <code>main()</code> function follows the same steps...</p>
+<ol>
+<li>
+<p>Fetch the <strong>Wayland Compositor</strong> and <strong>Wayland Shell</strong> from the <strong>Wayland Registry</strong>...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Get interfaces for Wayland Compositor and Wayland Shell</span>
+<span class="token function">get_server_references</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>We'll talk about <code>get_server_references()</code> and the Wayland Registry in a while.</p>
+</li>
+<li>
+<p>Every Wayland App needs a <strong>Wayland Surface</strong> (screen buffer) for displaying the app...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Create a Wayland Surface for rendering our app</span>
+surface <span class="token operator">=</span> <span class="token function">wl_compositor_create_surface</span><span class="token punctuation">(</span>compositor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+<li>
+<p>Create a <strong>Wayland Shell Surface</strong> (app window) for rendering our app...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Get the Wayland Shell Surface for rendering our app window</span>
+shell_surface <span class="token operator">=</span> <span class="token function">wl_shell_get_shell_surface</span><span class="token punctuation">(</span>shell<span class="token punctuation">,</span> surface<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+<li>
+<p>Set the Shell Surface as the <strong>Top Level</strong> window for our app...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Set the Shell Surface as top level</span>
+<span class="token function">wl_shell_surface_set_toplevel</span><span class="token punctuation">(</span>shell_surface<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+<li>
+<p>This part is specific to OpenGL apps...</p>
+<p>Earlier we have seen <code>create_opaque_region()</code>, <code>init_egl()</code> and <code>create_window()</code>. We call them to create the Wayland Region, EGL Context and EGL Window, and to render the OpenGL graphics.</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Create the Wayland Region for rendering OpenGL graphics</span>
+<span class="token function">create_opaque_region</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">//  Create the EGL Context for rendering OpenGL graphics</span>
+<span class="token function">init_egl</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">//  Create the EGL Window and render OpenGL graphics</span>
+<span class="token function">create_window</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+<li>
+<p>Every Wayland App needs an <strong>Event Loop</strong> for handling Wayland Events...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Handle all Wayland Events in the Event Loop</span>
+<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token function">wl_display_dispatch</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+</code></pre>
+</li>
+<li>
+<p>When our app terminates, we disconnect the Wayland Display...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Disconnect from the Wayland Display</span>
+<span class="token function">wl_display_disconnect</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+</ol>
+<p>Now let's build and test the app on our Linux development machine. (We'll run it on PinePhone later)</p>
+<h1 id="build-and-test-wayland-app-on-linux" class="section-header"><a href="#build-and-test-wayland-app-on-linux">5 Build and Test Wayland App on Linux</a></h1>
+<p>Now that we have created a <a href="https://github.com/lupyuen/pinephone-mir/blob/master/egl.c">simple Wayland app</a> that renders OpenGL graphics... Let's build it!</p>
+<p>Building a Wayland app is refreshingly simple (if you're used to GDK, Qt and SDL).</p>
+<p>Here's how we build the Wayland app in <a href="https://github.com/lupyuen/pinephone-mir/blob/master/egl.c"><code>egl.c</code></a> on a Linux machine (that has Wayland, MESA EGL and OpenGL ES2 libraries installed)...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Build the Wayland EGL app</span>
+gcc <span class="token punctuation">\</span>
+    -g <span class="token punctuation">\</span>
+    -o egl <span class="token punctuation">\</span>
+    egl.c <span class="token punctuation">\</span>
+    -Wl,-Map<span class="token operator">=</span>egl.map <span class="token punctuation">\</span>
+    -L/usr/lib/aarch64-linux-gnu/mesa-egl <span class="token punctuation">\</span>
+    -lwayland-client <span class="token punctuation">\</span>
+    -lwayland-server <span class="token punctuation">\</span>
+    -lwayland-egl <span class="token punctuation">\</span>
+    -lEGL <span class="token punctuation">\</span>
+    -lGLESv2
+</code></pre>
+<p>This produces the executable app <code>egl</code>. Run the <code>egl</code> app on our Linux machine like so...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Install Weston Wayland Compositor...</span>
+<span class="token comment"># For Arch Linux and Manjaro:</span>
+<span class="token function">sudo</span> pacman -S weston
+
+<span class="token comment"># For Other Distros:</span>
+<span class="token comment"># Check https://github.com/wayland-project/weston</span>
+
+<span class="token comment"># Start the Weston Wayland Compositor on our computer with the PinePhone screen dimensions</span>
+weston --width<span class="token operator">=</span><span class="token number">720</span> --height<span class="token operator">=</span><span class="token number">1398</span> <span class="token operator">&amp;</span>
+
+<span class="token comment"># Run the Wayland EGL app</span>
+./egl
+</code></pre>
+<p>This uses the <a href="https://github.com/wayland-project/weston"><strong>Weston Compositor</strong></a>, the reference implementation of the Wayland Compositor that runs on X11.</p>
+<p>We'll see this Inception-like window within a window...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-westonegl.png" alt="EGL App running with Wayland Weston Compositor on Pinebook Pro"></p>
+<p>We learn in a while how to build and run the app on PinePhone.</p>
+<h1 id="fetch-wayland-interfaces" class="section-header"><a href="#fetch-wayland-interfaces">6 Fetch Wayland Interfaces</a></h1>
+<p>Earlier we used the Wayland Compositor and the Wayland Shell in our app...</p>
+<ol>
+<li>
+<p><strong>Wayland Compositor</strong> (<code>compositor</code>): Manages the screen buffer used by apps</p>
+</li>
+<li>
+<p><strong>Wayland Shell</strong> (<code>shell</code>): Manages the app windows</p>
+</li>
+</ol>
+<p>Here's how we fetch the two interfaces from Wayland: <a href="https://github.com/lupyuen/pinephone-mir/blob/master/egl.c#L194-L251"><code>pinephone-mir/egl.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">/// Wayland Interfaces</span>
+<span class="token keyword">static</span> <span class="token keyword">struct</span> <span class="token class-name">wl_display</span>       <span class="token operator">*</span>display<span class="token punctuation">;</span>       <span class="token comment">//  Wayland Display</span>
+<span class="token keyword">static</span> <span class="token keyword">struct</span> <span class="token class-name">wl_compositor</span>    <span class="token operator">*</span>compositor<span class="token punctuation">;</span>    <span class="token comment">//  Wayland Compositor</span>
+<span class="token keyword">static</span> <span class="token keyword">struct</span> <span class="token class-name">wl_shell</span>         <span class="token operator">*</span>shell<span class="token punctuation">;</span>         <span class="token comment">//  Wayland Shell</span>
+
+<span class="token comment">/// Connect to Wayland Service and fetch the interfaces for Wayland Compositor and Wayland Shell</span>
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">get_server_references</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//  Connect to the Wayland Service</span>
+    display <span class="token operator">=</span> <span class="token function">wl_display_connect</span><span class="token punctuation">(</span><span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>display <span class="token operator">==</span> <span class="token constant">NULL</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"Failed to connect to display\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">exit</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">//  Get the Wayland Registry</span>
+    <span class="token keyword">struct</span> <span class="token class-name">wl_registry</span> <span class="token operator">*</span>registry <span class="token operator">=</span> <span class="token function">wl_display_get_registry</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>registry <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to get Wayland Registry</span>
+
+    <span class="token comment">//  Add Registry Callbacks to handle interfaces returned by Wayland Service</span>
+    <span class="token function">wl_registry_add_listener</span><span class="token punctuation">(</span>registry<span class="token punctuation">,</span> <span class="token operator">&amp;</span>registry_listener<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Wait for Registry Callbacks to fetch Wayland Interfaces</span>
+    <span class="token function">wl_display_dispatch</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">wl_display_roundtrip</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  We should have received interfaces for Wayland Compositor and Wayland Shell</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>compositor <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Failed to get Wayland Compositor</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>shell <span class="token operator">!=</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>       <span class="token comment">//  Failed to get Wayland Shell</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>What happens inside <code>get_server_references()</code>?</p>
+<ol>
+<li>
+<p>The Wayland Compositor runs as a Linux Service that listens on a <a href="https://en.wikipedia.org/wiki/Unix_file_types#Socket">Linux Socket File</a>: <code>/run/user/32011/wayland-0</code> for PinePhone on Ubuntu Touch.</p>
+<p>We connect to the <strong>Wayland Service</strong> like so...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Connect to the Wayland Service</span>
+display <span class="token operator">=</span> <span class="token function">wl_display_connect</span><span class="token punctuation">(</span><span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>Remember that all functions named <code>wl_...</code> come from the Wayland Library.</p>
+</li>
+<li>
+<p>To work with the Wayland Service, we fetch the Interfaces for the Wayland Compositor and Wayland Shell.</p>
+<p><strong>Wayland Interfaces</strong> are defined in the <strong>Wayland Registry</strong>...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Get the Wayland Registry</span>
+<span class="token keyword">struct</span> <span class="token class-name">wl_registry</span> <span class="token operator">*</span>registry <span class="token operator">=</span> <span class="token function">wl_display_get_registry</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+<li>
+<p>To fetch the Compositor and Shell from the Wayland Registry, we add a <strong>Registry Listener</strong> (more about this later)...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Add Registry Callbacks to handle interfaces returned by Wayland Service</span>
+<span class="token function">wl_registry_add_listener</span><span class="token punctuation">(</span>registry<span class="token punctuation">,</span> <span class="token operator">&amp;</span>registry_listener<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+<li>
+<p>Now we <strong>dispatch the Registry Listener request</strong> to the Wayland Service. (Remember that the Wayland Service operates on Linux Socket Messages)</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Wait for Registry Callbacks to fetch Wayland Interfaces</span>
+<span class="token function">wl_display_dispatch</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">wl_display_roundtrip</span><span class="token punctuation">(</span>display<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+</ol>
+<p>And we'll get the <code>compositor</code> and <code>shell</code> objects populated from the Wayland Registry!</p>
+<p>If you're curious, the Registry Listener works like this: <a href="https://github.com/lupyuen/pinephone-mir/blob/master/egl.c#L194-L251"><code>pinephone-mir/egl.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">/// Callbacks for interfaces returned by Wayland Service</span>
+<span class="token keyword">static</span> <span class="token keyword">const</span> <span class="token keyword">struct</span> <span class="token class-name">wl_registry_listener</span> registry_listener <span class="token operator">=</span> <span class="token punctuation">{</span>
+    global_registry_handler<span class="token punctuation">,</span>
+    global_registry_remover
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token comment">/// Callback for interfaces returned by Wayland Service</span>
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">global_registry_handler</span><span class="token punctuation">(</span><span class="token keyword">void</span> <span class="token operator">*</span>data<span class="token punctuation">,</span> <span class="token keyword">struct</span> <span class="token class-name">wl_registry</span> <span class="token operator">*</span>registry<span class="token punctuation">,</span> uint32_t id<span class="token punctuation">,</span>
+    <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span>interface<span class="token punctuation">,</span> uint32_t version<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Got interface %s id %d\n"</span><span class="token punctuation">,</span> interface<span class="token punctuation">,</span> id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">strcmp</span><span class="token punctuation">(</span>interface<span class="token punctuation">,</span> <span class="token string">"wl_compositor"</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">//  Bind to Wayland Compositor Interface</span>
+        compositor <span class="token operator">=</span> <span class="token function">wl_registry_bind</span><span class="token punctuation">(</span>registry<span class="token punctuation">,</span> id<span class="token punctuation">,</span>
+            <span class="token operator">&amp;</span>wl_compositor_interface<span class="token punctuation">,</span>   <span class="token comment">//  Interface Type</span>
+            <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>                         <span class="token comment">//  Interface Version</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">strcmp</span><span class="token punctuation">(</span>interface<span class="token punctuation">,</span> <span class="token string">"wl_shell"</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token comment">//  Bind to Wayland Shell Interface</span>
+        shell <span class="token operator">=</span> <span class="token function">wl_registry_bind</span><span class="token punctuation">(</span>registry<span class="token punctuation">,</span> id<span class="token punctuation">,</span>
+            <span class="token operator">&amp;</span>wl_shell_interface<span class="token punctuation">,</span>        <span class="token comment">//  Interface Type</span>
+            <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>                         <span class="token comment">//  Interface Version</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><code>global_registry_handler()</code> is the Callback Function that will be triggered for every interface in the Wayland Registry. </p>
+<p>The Wayland Service for Ubuntu Touch <code>unity-system-compositor</code> returns a whole bunch of interesting Wayland Interfaces (like <code>qt_windowmanager</code>). </p>
+<p>But today we'll bind to the Compositor Interface named <code>wl_compositor</code> and Shell Interface named <code>wl_shell</code>.</p>
+<p>And that's how we render a yellow rectangle with Wayland and OpenGL!</p>
+<p>Let's move on to something more interesting: Rendering a simple bitmap texture...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-egl2.jpg" alt="Rendering a simple bitmap texture with Wayland and OpenGL on PinePhone"></p>
+<p><em>Rendering a simple bitmap texture with Wayland and OpenGL on PinePhone</em></p>
+<h1 id="render-opengl-bitmap-texture-with-wayland" class="section-header"><a href="#render-opengl-bitmap-texture-with-wayland">7 Render OpenGL Bitmap Texture with Wayland</a></h1>
+<p>The four boxes we see above are rendered from a magnified <strong>2-pixel by 2-pixel bitmap</strong>: <a href="https://github.com/lupyuen/pinephone-mir/blob/master/texture.c#L30-L64"><code>pinephone-mir/texture.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">// 2x2 Image, 3 bytes per pixel (R, G, B)</span>
+GLubyte pixels<span class="token punctuation">[</span><span class="token number">4</span> <span class="token operator">*</span> <span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token number">255</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span>  <span class="token comment">// Red</span>
+    <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">255</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span>  <span class="token comment">// Green</span>
+    <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">255</span><span class="token punctuation">,</span>  <span class="token comment">// Blue</span>
+    <span class="token number">255</span><span class="token punctuation">,</span> <span class="token number">255</span><span class="token punctuation">,</span> <span class="token number">0</span> <span class="token comment">// Yellow</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre>
+<p>We render the bitmap by creating an <strong>OpenGL Texture</strong>: <a href="https://github.com/lupyuen/pinephone-mir/blob/master/texture.c#L30-L64"><code>pinephone-mir/texture.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">// Create a simple 2x2 texture image with four different colors</span>
+GLuint <span class="token function">CreateSimpleTexture2D</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Texture object handle</span>
+    GLuint textureId<span class="token punctuation">;</span>
+
+    <span class="token comment">// 2x2 Image, 3 bytes per pixel (R, G, B)</span>
+    GLubyte pixels<span class="token punctuation">[</span><span class="token number">4</span> <span class="token operator">*</span> <span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+        <span class="token number">255</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span>  <span class="token comment">// Red</span>
+        <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">255</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span>  <span class="token comment">// Green</span>
+        <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">255</span><span class="token punctuation">,</span>  <span class="token comment">// Blue</span>
+        <span class="token number">255</span><span class="token punctuation">,</span> <span class="token number">255</span><span class="token punctuation">,</span> <span class="token number">0</span> <span class="token comment">// Yellow</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// Use tightly packed data</span>
+    <span class="token function">glPixelStorei</span><span class="token punctuation">(</span>GL_UNPACK_ALIGNMENT<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// Generate a texture object</span>
+    <span class="token function">glGenTextures</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>textureId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// Bind the texture object</span>
+    <span class="token function">glBindTexture</span><span class="token punctuation">(</span>GL_TEXTURE_2D<span class="token punctuation">,</span> textureId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// Load the texture</span>
+    <span class="token function">glTexImage2D</span><span class="token punctuation">(</span>GL_TEXTURE_2D<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> GL_RGB<span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> GL_RGB<span class="token punctuation">,</span> GL_UNSIGNED_BYTE<span class="token punctuation">,</span> pixels<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// Set the filtering mode</span>
+    <span class="token function">glTexParameteri</span><span class="token punctuation">(</span>GL_TEXTURE_2D<span class="token punctuation">,</span> GL_TEXTURE_MIN_FILTER<span class="token punctuation">,</span> GL_NEAREST<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glTexParameteri</span><span class="token punctuation">(</span>GL_TEXTURE_2D<span class="token punctuation">,</span> GL_TEXTURE_MAG_FILTER<span class="token punctuation">,</span> GL_NEAREST<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> textureId<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>(Not the most efficient way to render a bitmap... But let's try this and test drive PinePhone's GPU!)</p>
+<p>This is the usual way we create an OpenGL Texture, as explained in <a href="http://www.opengles-book.com/">"OpenGL® ES 3.0 Programming Guide"</a>.</p>
+<p>Here comes the tricky part... Before rendering the OpenGL Texture, we need to program the <strong>GPU Shaders</strong> on PinePhone with a C-like language: <a href="https://github.com/lupyuen/pinephone-mir/blob/master/texture.c#L66-L93"><code>pinephone-mir/texture.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">// Initialize the shader and program object</span>
+<span class="token keyword">int</span> <span class="token function">Init</span><span class="token punctuation">(</span>ESContext <span class="token operator">*</span>esContext<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    esContext<span class="token operator">-&gt;</span>userData <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span>UserData<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    UserData <span class="token operator">*</span>userData <span class="token operator">=</span> esContext<span class="token operator">-&gt;</span>userData<span class="token punctuation">;</span>
+    GLbyte vShaderStr<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span>
+        <span class="token string">"attribute vec4 a_position;   \n"</span>
+        <span class="token string">"attribute vec2 a_texCoord;   \n"</span>
+        <span class="token string">"varying vec2 v_texCoord;     \n"</span>
+        <span class="token string">"void main()                  \n"</span>
+        <span class="token string">"{                            \n"</span>
+        <span class="token string">"   gl_Position = a_position; \n"</span>
+        <span class="token string">"   v_texCoord = a_texCoord;  \n"</span>
+        <span class="token string">"}                            \n"</span><span class="token punctuation">;</span>
+
+    GLbyte fShaderStr<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span>
+        <span class="token string">"precision mediump float;                            \n"</span>
+        <span class="token string">"varying vec2 v_texCoord;                            \n"</span>
+        <span class="token string">"uniform sampler2D s_texture;                        \n"</span>
+        <span class="token string">"void main()                                         \n"</span>
+        <span class="token string">"{                                                   \n"</span>
+        <span class="token string">"  gl_FragColor = texture2D( s_texture, v_texCoord );\n"</span>
+        <span class="token string">"}                                                   \n"</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// Load the shaders and get a linked program object</span>
+    userData<span class="token operator">-&gt;</span>programObject <span class="token operator">=</span> <span class="token function">esLoadProgram</span><span class="token punctuation">(</span>vShaderStr<span class="token punctuation">,</span> fShaderStr<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+</code></pre>
+<p>(Yep a C program within a C program... Inception!)</p>
+<p><code>esLoadProgram()</code> is defined in <a href="https://github.com/lupyuen/pinephone-mir/blob/master/shader.c"><code>pinephone-mir/shader.c</code></a></p>
+<p>We're now talking to PinePhone's GPU, which is so low-level that it understand only Triangles, not Rectangles.</p>
+<p>Hence to render the OpenGL Texture, we map the Rectangular Texture onto two Triangles and render them: <a href="https://github.com/lupyuen/pinephone-mir/blob/master/texture.c#L109-L130"><code>pinephone-mir/texture.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">// Draw a triangle using the shader pair created in Init()</span>
+<span class="token keyword">void</span> <span class="token function">Draw</span><span class="token punctuation">(</span>ESContext <span class="token operator">*</span>esContext<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    GLfloat vVertices<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+        <span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">,</span>   <span class="token number">0.5f</span><span class="token punctuation">,</span>  <span class="token number">0.0f</span><span class="token punctuation">,</span>  <span class="token comment">// Position 0</span>
+         <span class="token number">0.0f</span><span class="token punctuation">,</span>   <span class="token number">0.0f</span><span class="token punctuation">,</span>         <span class="token comment">// TexCoord 0</span>
+        <span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">,</span>  <span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">,</span>  <span class="token number">0.0f</span><span class="token punctuation">,</span>  <span class="token comment">// Position 1</span>
+         <span class="token number">0.0f</span><span class="token punctuation">,</span>   <span class="token number">1.0f</span><span class="token punctuation">,</span>         <span class="token comment">// TexCoord 1</span>
+         <span class="token number">0.5f</span><span class="token punctuation">,</span>  <span class="token operator">-</span><span class="token number">0.5f</span><span class="token punctuation">,</span>  <span class="token number">0.0f</span><span class="token punctuation">,</span>  <span class="token comment">// Position 2</span>
+         <span class="token number">1.0f</span><span class="token punctuation">,</span>   <span class="token number">1.0f</span><span class="token punctuation">,</span>         <span class="token comment">// TexCoord 2</span>
+         <span class="token number">0.5f</span><span class="token punctuation">,</span>   <span class="token number">0.5f</span><span class="token punctuation">,</span>  <span class="token number">0.0f</span><span class="token punctuation">,</span>  <span class="token comment">// Position 3</span>
+         <span class="token number">1.0f</span><span class="token punctuation">,</span>   <span class="token number">0.0f</span>          <span class="token comment">// TexCoord 3</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    GLushort indices<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+        <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span>  <span class="token comment">//  First Triangle</span>
+        <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span>   <span class="token comment">//  Second Triangle</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+    <span class="token comment">//  Draw the 6 vertices as 2 triangles</span>
+    <span class="token function">glDrawElements</span><span class="token punctuation">(</span>GL_TRIANGLES<span class="token punctuation">,</span> <span class="token number">6</span><span class="token punctuation">,</span> GL_UNSIGNED_SHORT<span class="token punctuation">,</span> indices<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>(Yes the math is starting to hurt... But that's the end of it!)</p>
+<p>Finally we connect the above code to render the four colour boxes on PinePhone, thanks to Wayland and OpenGL: <a href="https://github.com/lupyuen/pinephone-mir/blob/master/egl2.c#L51-L67">pinephone-mir/egl2.c</a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">/// Render the OpenGL ES2 display</span>
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">render_display</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//  Create the texture context</span>
+    <span class="token keyword">static</span> ESContext esContext<span class="token punctuation">;</span>
+    <span class="token function">esInitContext</span> <span class="token punctuation">(</span> <span class="token operator">&amp;</span>esContext <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    esContext<span class="token punctuation">.</span>width  <span class="token operator">=</span> WIDTH<span class="token punctuation">;</span>
+    esContext<span class="token punctuation">.</span>height <span class="token operator">=</span> HEIGHT<span class="token punctuation">;</span>
+
+    <span class="token comment">//  Draw the texture</span>
+    <span class="token function">Init</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>esContext<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">Draw</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>esContext<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Render now</span>
+    <span class="token function">glFlush</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>And that's <a href="https://github.com/lupyuen/pinephone-mir/blob/master/egl2.c">our Wayland App</a> that renders a simple OpenGL Bitmap Texture!</p>
+<p>The OpenGL Texture code in this article was adapted from <a href="https://github.com/danginsburg/opengles-book-samples">"OpenGL® ES 2.0 Programming Guide"</a></p>
+<p>Let's head on towards greatness and something really useful: Graphical User Interfaces...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-button.jpg" alt="Button rendered with LVGL and Wayland on PinePhone"></p>
+<p><em>Button rendered with LVGL and Wayland on PinePhone</em></p>
+<h1 id="lvgl-toolkit-for-graphical-user-interfaces" class="section-header"><a href="#lvgl-toolkit-for-graphical-user-interfaces">8 LVGL Toolkit for Graphical User Interfaces</a></h1>
+<p>Now that we can render bitmaps on PinePhone, let's think...</p>
+<p><em>How would we render a simple Graphical User Interface (GUI) on PinePhone, like the button above?</em></p>
+<p>Why don't we use a simple GUI Toolkit like <a href="https://lvgl.io/"><strong>LVGL</strong></a>? (Formerly LittleVGL)</p>
+<p>Here's how we call the LVGL library to render that button: <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/wayland/lvgl.c#L54-L64"><code>lvgl-wayland/wayland/lvgl.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"../lvgl.h"</span></span>
+
+<span class="token comment">/// Render a Button Widget and a Label Widget</span>
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">render_widgets</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    lv_obj_t <span class="token operator">*</span> btn <span class="token operator">=</span> <span class="token function">lv_btn_create</span><span class="token punctuation">(</span><span class="token function">lv_scr_act</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>     <span class="token comment">//  Add a button the current screen</span>
+    <span class="token function">lv_obj_set_pos</span><span class="token punctuation">(</span>btn<span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span>                            <span class="token comment">//  Set its position</span>
+    <span class="token function">lv_obj_set_size</span><span class="token punctuation">(</span>btn<span class="token punctuation">,</span> <span class="token number">120</span><span class="token punctuation">,</span> <span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">;</span>                          <span class="token comment">//  Set its size</span>
+
+    lv_obj_t <span class="token operator">*</span> label <span class="token operator">=</span> <span class="token function">lv_label_create</span><span class="token punctuation">(</span>btn<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>          <span class="token comment">//  Add a label to the button</span>
+    <span class="token function">lv_label_set_text</span><span class="token punctuation">(</span>label<span class="token punctuation">,</span> <span class="token string">"Button"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>                     <span class="token comment">//  Set the labels text</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><em>Easy peasy!</em></p>
+<p>LVGL is a simple C toolkit designed for Embedded Devices, so it needs <strong>very little memory and processing power</strong>.  LVGL is <strong>self-contained</strong>... Fonts and icons are bundled into the LVGL library.</p>
+<p>It's used on <a href="https://github.com/JF002/Pinetime"><strong>PineTime Smart Watch</strong></a> to render watch faces.</p>
+<p><em>LVGL doesn't run on Wayland yet... But we'll fix that!</em></p>
+<p>Remember how we rendered a simple 2-pixel by 2-pixel bitmap by creating an OpenGL Texture with <code>CreateSimpleTexture2D()</code>?</p>
+<p>Let's extend that bitmap to cover the entire PinePhone screen: 720 pixels by 1398 pixels.</p>
+<p>And we create the OpenGL Texture for the entire PinePhone screen like so: <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/wayland/texture.c#L38-L72"><code>lvgl-wayland/wayland/texture.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">///  PinePhone Screen Resolution, defined in lv_conf.h</span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token expression"><span class="token function">LV_HOR_RES_MAX</span>          <span class="token punctuation">(</span><span class="token number">720</span><span class="token punctuation">)</span></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token expression"><span class="token function">LV_VER_RES_MAX</span>          <span class="token punctuation">(</span><span class="token number">1398</span><span class="token punctuation">)</span></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token expression">LV_SCALE_RES            <span class="token number">1</span></span></span>
+
+<span class="token comment">///  Screen buffer </span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token expression">BYTES_PER_PIXEL <span class="token number">3</span></span></span>
+GLubyte pixels<span class="token punctuation">[</span>LV_HOR_RES_MAX <span class="token operator">*</span> LV_VER_RES_MAX <span class="token operator">*</span> BYTES_PER_PIXEL<span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+<span class="token comment">/// Create an OpenGL Texture for the screen buffer</span>
+GLuint <span class="token function">CreateTexture</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    GLuint texId<span class="token punctuation">;</span>
+    <span class="token function">glGenTextures</span> <span class="token punctuation">(</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>texId <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glBindTexture</span> <span class="token punctuation">(</span> GL_TEXTURE_2D<span class="token punctuation">,</span> texId <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token function">glTexImage2D</span> <span class="token punctuation">(</span>
+        GL_TEXTURE_2D<span class="token punctuation">,</span> 
+        <span class="token number">0</span><span class="token punctuation">,</span>  <span class="token comment">//  Level</span>
+        GL_RGB<span class="token punctuation">,</span> 
+        LV_HOR_RES_MAX<span class="token punctuation">,</span>  <span class="token comment">//  Width</span>
+        LV_VER_RES_MAX<span class="token punctuation">,</span>  <span class="token comment">//  Height </span>
+        <span class="token number">0</span><span class="token punctuation">,</span>  <span class="token comment">//  Format </span>
+        GL_RGB<span class="token punctuation">,</span> 
+        GL_UNSIGNED_BYTE<span class="token punctuation">,</span> 
+        pixels 
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glTexParameteri</span> <span class="token punctuation">(</span> GL_TEXTURE_2D<span class="token punctuation">,</span> GL_TEXTURE_MIN_FILTER<span class="token punctuation">,</span> GL_LINEAR <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glTexParameteri</span> <span class="token punctuation">(</span> GL_TEXTURE_2D<span class="token punctuation">,</span> GL_TEXTURE_MAG_FILTER<span class="token punctuation">,</span> GL_LINEAR <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glTexParameteri</span> <span class="token punctuation">(</span> GL_TEXTURE_2D<span class="token punctuation">,</span> GL_TEXTURE_WRAP_S<span class="token punctuation">,</span> GL_CLAMP_TO_EDGE <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">glTexParameteri</span> <span class="token punctuation">(</span> GL_TEXTURE_2D<span class="token punctuation">,</span> GL_TEXTURE_WRAP_T<span class="token punctuation">,</span> GL_CLAMP_TO_EDGE <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> texId<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><code>pixels</code> is the screen buffer that will contain the pixels for our rendered UI controls, like our button.</p>
+<p>We'll tell LVGL to render into <code>pixels</code> like so: <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/wayland/texture.c#L38-L72"><code>lvgl-wayland/wayland/texture.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">/// Set the colour of a pixel in the screen buffer</span>
+<span class="token keyword">void</span> <span class="token function">put_px</span><span class="token punctuation">(</span>uint16_t x<span class="token punctuation">,</span> uint16_t y<span class="token punctuation">,</span> uint8_t r<span class="token punctuation">,</span> uint8_t g<span class="token punctuation">,</span> uint8_t b<span class="token punctuation">,</span> uint8_t a<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>x <span class="token operator">&gt;=</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token function">assert</span><span class="token punctuation">(</span>x <span class="token operator">&lt;</span> LV_HOR_RES_MAX<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">assert</span><span class="token punctuation">(</span>y <span class="token operator">&gt;=</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token function">assert</span><span class="token punctuation">(</span>y <span class="token operator">&lt;</span> LV_VER_RES_MAX<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token punctuation">(</span>y <span class="token operator">*</span> LV_HOR_RES_MAX <span class="token operator">*</span> BYTES_PER_PIXEL<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token punctuation">(</span>x <span class="token operator">*</span> BYTES_PER_PIXEL<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    pixels<span class="token punctuation">[</span>i<span class="token operator">++</span><span class="token punctuation">]</span> <span class="token operator">=</span> r<span class="token punctuation">;</span>  <span class="token comment">//  Red</span>
+    pixels<span class="token punctuation">[</span>i<span class="token operator">++</span><span class="token punctuation">]</span> <span class="token operator">=</span> g<span class="token punctuation">;</span>  <span class="token comment">//  Green</span>
+    pixels<span class="token punctuation">[</span>i<span class="token operator">++</span><span class="token punctuation">]</span> <span class="token operator">=</span> b<span class="token punctuation">;</span>  <span class="token comment">//  Blue</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>(Simplistic, not efficient though)</p>
+<p>We'll render the OpenGL Texture the same way as before: <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/wayland/lvgl.c#L65-L93"><code>lvgl-wayland/wayland/lvgl.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">/// Render the OpenGL ES2 display</span>
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">render_display</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//  This part is new...</span>
+
+    <span class="token comment">//  Init the LVGL display</span>
+    <span class="token function">lv_init</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">lv_port_disp_init</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Create the LVGL widgets: Button and label</span>
+    <span class="token function">render_widgets</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Render the LVGL widgets</span>
+    <span class="token function">lv_task_handler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  This part is the same as before...</span>
+
+    <span class="token comment">//  Create the texture context</span>
+    <span class="token keyword">static</span> ESContext esContext<span class="token punctuation">;</span>
+    <span class="token function">esInitContext</span> <span class="token punctuation">(</span> <span class="token operator">&amp;</span>esContext <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    esContext<span class="token punctuation">.</span>width  <span class="token operator">=</span> WIDTH<span class="token punctuation">;</span>
+    esContext<span class="token punctuation">.</span>height <span class="token operator">=</span> HEIGHT<span class="token punctuation">;</span>
+
+    <span class="token comment">//   Draw the texture</span>
+    <span class="token function">Init</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>esContext<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">Draw</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>esContext<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Render now</span>
+    <span class="token function">glFlush</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>But now we have injected the calls to the LVGL library...</p>
+<ol>
+<li>
+<p><a href="https://docs.lvgl.io/latest/en/html/widgets/obj.html?highlight=lv_init#_CPPv47lv_initv"><strong><code>lv_init()</code></strong></a>: Initialise the LVGL library</p>
+</li>
+<li>
+<p><a href="https://github.com/lupyuen/lvgl-wayland/blob/72b0273d6c609ecb51142ee400f545116ca0ecd9/wayland/lv_port_disp.c#L48-L126"><strong><code>lv_port_disp_init()</code></strong></a>: Initialise our display</p>
+</li>
+<li>
+<p><a href="https://github.com/lupyuen/lvgl-wayland/blob/master/wayland/lvgl.c#L54-L64"><strong><code>render_widgets()</code></strong></a>: Calls the LVGL library to create two UI controls: a Button and a Label</p>
+</li>
+<li>
+<p><a href="https://docs.lvgl.io/latest/en/html/porting/task-handler.html?highlight=lv_task_handler"><strong><code>lv_task_handler()</code></strong></a>: Let LVGL render the UI controls into our screen buffer</p>
+</li>
+</ol>
+<p>Now let's tweak the LVGL library to render UI controls into our screen buffer <code>pixels</code></p>
+<h1 id="port-lvgl-to-wayland" class="section-header"><a href="#port-lvgl-to-wayland">9 Port LVGL to Wayland</a></h1>
+<p>Porting LVGL to Wayland and Ubuntu Touch is straightforward.</p>
+<p>According to the <a href="https://docs.lvgl.io/latest/en/html/porting/display.html">LVGL Porting Doc</a>, we need to code a Flush Callback Function <code>disp_flush()</code> that will be called by LVGL to render UI controls to the screen buffer.</p>
+<p>Here's our implementation for Wayland: <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/wayland/lv_port_disp.c#L142-L167"><code>lvgl-wayland/wayland/lv_port_disp.c</code></a></p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  Flush the content of the internal buffer to the specific area on the display</span>
+<span class="token comment">//  You can use DMA or any hardware acceleration to do this operation in the background but</span>
+<span class="token comment">//  'lv_disp_flush_ready()' has to be called when finished.</span>
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">disp_flush</span><span class="token punctuation">(</span>lv_disp_drv_t <span class="token operator">*</span> disp_drv<span class="token punctuation">,</span> <span class="token keyword">const</span> lv_area_t <span class="token operator">*</span> area<span class="token punctuation">,</span> lv_color_t <span class="token operator">*</span> color_p<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//  The most simple case (but also the slowest) to put all pixels to the screen one-by-one</span>
+    <span class="token keyword">for</span><span class="token punctuation">(</span>int32_t y <span class="token operator">=</span> area<span class="token operator">-&gt;</span>y1<span class="token punctuation">;</span> y <span class="token operator">&lt;=</span> area<span class="token operator">-&gt;</span>y2<span class="token punctuation">;</span> y<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">for</span><span class="token punctuation">(</span>int32_t x <span class="token operator">=</span> area<span class="token operator">-&gt;</span>x1<span class="token punctuation">;</span> x <span class="token operator">&lt;=</span> area<span class="token operator">-&gt;</span>x2<span class="token punctuation">;</span> x<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">//  Put a pixel to the screen buffer</span>
+            <span class="token function">put_px</span><span class="token punctuation">(</span>x<span class="token punctuation">,</span> y<span class="token punctuation">,</span> 
+                color_p<span class="token operator">-&gt;</span>ch<span class="token punctuation">.</span>red<span class="token punctuation">,</span> 
+                color_p<span class="token operator">-&gt;</span>ch<span class="token punctuation">.</span>green<span class="token punctuation">,</span> 
+                color_p<span class="token operator">-&gt;</span>ch<span class="token punctuation">.</span>blue<span class="token punctuation">,</span> 
+                <span class="token number">0xff</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            color_p<span class="token operator">++</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token comment">//  Inform the graphics library that we are ready with the flushing</span>
+    <span class="token function">lv_disp_flush_ready</span><span class="token punctuation">(</span>disp_drv<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>We've seen earlier that <code>put_px()</code> draws pixels in the 
+simplest way possible.  Eventually we should use PinePhone's GPU for 
+rendering LVGL controls, by implementing the <a href="https://docs.lvgl.io/latest/en/html/porting/display.html#display-driver">LVGL GPU Callbacks</a>.</p>
+<p>Light and Dark Themes are provided by LVGL. To select the default theme just edit <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/lv_conf.h#L444-L446"><code>lvgl-wayland/lv_conf.h</code></a></p>
+<p>Here's Dark Theme...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  For Dark Theme...</span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token expression">LV_THEME_DEFAULT_FLAG LV_THEME_MATERIAL_FLAG_DARK</span></span>
+</code></pre>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-dark.jpg" alt="LVGL Dark Theme with Wayland on PinePhone"></p>
+<p>And Light Theme...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">//  For Light Theme...</span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token expression">LV_THEME_DEFAULT_FLAG LV_THEME_MATERIAL_FLAG_LIGHT</span></span>
+</code></pre>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-light.jpg" alt="LVGL Light Theme with Wayland on PinePhone"></p>
+<p>The screens above were rendered by updating one line in <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/wayland/lvgl.c#L65-L76"><code>lvgl-wayland/wayland/lvgl.c</code></a>...</p>
+<pre class=" language-c"><code class=" language-c"><span class="token comment">/// Render the OpenGL ES2 display</span>
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">render_display</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//  Init the LVGL display</span>
+    <span class="token function">lv_init</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">lv_port_disp_init</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">//  Create the LVGL widgets</span>
+    <span class="token function">lv_demo_widgets</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//  Previously render_widgets()</span>
+</code></pre>
+<p><code>lv_demo_widgets()</code> comes from <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/demo/lv_demo_widgets.c"><code>lvgl-wayland/demo/lv_demo_widgets.c</code></a></p>
+<p><em>What about Touch Input in LVGL for Ubuntu Touch?</em></p>
+<p>We haven't handled Touch Input yet... Lemme know if you're keen to help!</p>
+<p><em>Do we really have to code LVGL Apps for PinePhone in C?</em></p>
+<p>Rust is supported too! </p>
+<p>We may write LVGL Apps for PinePhone in Rust by calling the <a href="https://github.com/rafaelcaricio/lvgl-rs"><strong><code>lvgl-rs</code> Rust Wrapper for LVGL</strong></a> by <a href="https://github.com/rafaelcaricio"><strong>Rafael Carício</strong></a>.</p>
+<p>(Fun Fact: <code>lvgl-rs</code> was <a href="https://lupyuen.github.io/PineTime-apps/articles/watch_face">originally created</a> for PineTime Smart Watch... Today it's used by <a href="https://twitter.com/rafaelcaricio/status/1271886471260184577?s=20">Rust on PlayStation Portable</a> too!)</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-size.jpg" alt="Size of LVGL Demo App on PinePhone with Ubuntu Touch"></p>
+<p><em>How small is LVGL on PinePhone with Ubuntu Touch?</em></p>
+<p><strong>1.5 MB</strong> for the Light / Dark Theme LVGL Demo App above.</p>
+<p>Not that big, considering that the font, icons and debugging symbols are bundled inside.</p>
+<p><em>How does LVGL compare with Qt, GTK and SDL on PinePhone with Ubuntu Touch?</em></p>
+<p>Qt is the only officially supported App Toolkit on Ubuntu Touch. </p>
+<p>GTK and SDL are supposed to work on Wayland... But I couldn't get them to work on Ubuntu Touch. </p>
+<p>(Probably because legacy X11 compatibility is missing from Ubuntu Touch, i.e. XWayland)</p>
+<p>I applaud the maintainers of X11, Qt, GTK and SDL because every new release needs to support so many legacy features. Kudos!</p>
+<p>But what if we could start from scratch, drop the legacy stuff, and build a simpler UI toolkit for Wayland?</p>
+<p><em>LVGL is the experiment that we're undertaking today!</em></p>
+<h1 id="build-lvgl-on-pinephone-with-ubuntu-touch" class="section-header"><a href="#build-lvgl-on-pinephone-with-ubuntu-touch">10 Build LVGL on PinePhone with Ubuntu Touch</a></h1>
+<p>Follow these steps to build LVGL on PinePhone over SSH.</p>
+<p>(If we haven't enabled SSH on PinePhone, check the "Configure SSH on PinePhone" instructions below)</p>
+<p>Connect to PinePhone over SSH and enter these commands...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Make system folders writeable before installing any packages</span>
+<span class="token function">sudo</span> <span class="token function">mount</span> -o remount,rw /
+
+<span class="token comment"># Install dev tools and GLES2 library</span>
+<span class="token function">sudo</span> <span class="token function">apt</span> <span class="token function">install</span> gcc gdb <span class="token function">git</span> <span class="token function">make</span> libgles2-mesa-dev
+
+<span class="token comment"># Download the source code</span>
+<span class="token builtin class-name">cd</span> ~
+<span class="token function">git</span> clone https://github.com/lupyuen/lvgl-wayland
+<span class="token builtin class-name">cd</span> lvgl-wayland
+
+<span class="token comment"># Build the app</span>
+<span class="token function">make</span>
+</code></pre>
+<p>This creates the executable <code>~/lvgl-wayland/wayland/lvgl</code></p>
+<p><em>Can we just run <code>lvgl</code> from the Terminal Command Line?</em></p>
+<p>Nope! Because Wayland and Ubuntu Touch are super-secure, thanks to <a href="https://en.wikipedia.org/wiki/AppArmor#:%7E:text=AppArmor%20(%22Application%20Armor%22),execute%20files%20on%20matching%20paths."><strong>AppArmor</strong></a>.</p>
+<p>But there's a way to trick AppArmor into allowing <code>lvgl</code> to be launched (since we are Superuser). </p>
+<p>Read on to learn how...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-apparmor.jpg" alt="Fighting AppArmor Security... Permission Denied!"></p>
+<p><em>Fighting AppArmor Security... Permission Denied!</em></p>
+<h1 id="inject-lvgl-into-file-manager-app" class="section-header"><a href="#inject-lvgl-into-file-manager-app">11 Inject LVGL into File Manager App</a></h1>
+<p>For rapid testing (and to work around AppArmor), we shall replace the <strong>File Manager</strong> app by our <code>lvgl</code> app because <strong>File Manager has no AppArmor restrictions</strong> (Unconfined).</p>
+<p>(More about AppArmor in a while)</p>
+<p>Connect to PinePhone over SSH and enter these commands...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Make system folders writeable and go to File Manager Click Package folder</span>
+<span class="token function">sudo</span> <span class="token function">mount</span> -o remount,rw /
+<span class="token builtin class-name">cd</span> /usr/share/click/preinstalled/.click/users/@all/com.ubuntu.filemanager
+
+<span class="token comment"># Back up the desktop file. Restore this desktop file to go back to the normal File Manager</span>
+<span class="token function">sudo</span> <span class="token function">cp</span> com.ubuntu.filemanager.desktop com.ubuntu.filemanager.desktop.old
+
+<span class="token comment"># Edit the desktop file</span>
+<span class="token function">sudo</span> <span class="token function">nano</span> com.ubuntu.filemanager.desktop 
+</code></pre>
+<p>We're now altering the behaviour of File Manager, by tampering with the <a href="http://docs.ubports.com/en/latest/appdev/platform/click.html#security-and-app-isolation"><strong>Click Package</strong></a> settings for File Manager.</p>
+<p>(Why are we tampering with a Click Package? We'll learn in a while)</p>
+<p>Change the <code>Exec</code> line from...</p>
+<pre class=" language-text"><code class=" language-text">Exec=filemanager
+</code></pre>
+<p>To...</p>
+<pre class=" language-text"><code class=" language-text">Exec=./run.sh
+</code></pre>
+<p>Save and exit <code>nano</code></p>
+<p>We have modded the File Manager icon so that it now launches <code>run.sh</code> instead of the usual <code>filemanager</code> executable.</p>
+<p>(It's like switching the executable for a Windows Explorer Shortcut)</p>
+<p>We'll be installing <code>run.sh</code> later with a script: <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/wayland/lvgl.sh"><code>lvgl.sh</code></a></p>
+<p>In the meantime, check that <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/wayland/run.sh"><code>run.sh</code></a> (located at <code>~/lvgl-wayland/wayland</code>) contains the following...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Log Wayland messages</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">WAYLAND_DEBUG</span><span class="token operator">=</span><span class="token number">1</span>
+
+<span class="token comment"># Run lvgl app</span>
+./lvgl
+</code></pre>
+<p>If we see this...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Debug lvgl app</span>
+gdb <span class="token punctuation">\</span>
+    -ex<span class="token operator">=</span><span class="token string">"r"</span> <span class="token punctuation">\</span>
+    -ex<span class="token operator">=</span><span class="token string">"bt"</span> <span class="token punctuation">\</span>
+    -ex<span class="token operator">=</span><span class="token string">"frame"</span> <span class="token punctuation">\</span>
+    --args ./lvgl
+</code></pre>
+<p>It means that the <code>lvgl</code> app will be started with the <code>gdb</code> debugger.</p>
+<p>If it crashes with a bad C pointer, the <code>gdb</code> debugger will show a helpful stack trace.</p>
+<p>And this...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Run lvgl app with strace</span>
+./strace <span class="token punctuation">\</span>
+   -s <span class="token number">1024</span> <span class="token punctuation">\</span>
+   ./lvgl
+</code></pre>
+<p>Is for tracing the <code>lvgl</code> app with <code>strace</code>. It shows <strong>everything</strong> done by the app.</p>
+<p><a href="https://github.com/lupyuen/pinephone-mir/blob/090630777782a5f4b283af84c747b9ad6c703e22/logs/filemanager-strace.log#L724">Check out this <code>strace</code> log for the File Manager on Ubuntu Touch</a></p>
+<h1 id="run-lvgl-on-pinephone-with-ubuntu-touch" class="section-header"><a href="#run-lvgl-on-pinephone-with-ubuntu-touch">12 Run LVGL on PinePhone with Ubuntu Touch</a></h1>
+<p>Finally we're ready to run our <code>lvgl</code> app! </p>
+<p>Connect to PinePhone over SSH and enter these commands...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token builtin class-name">cd</span> ~/lvgl-wayland
+./wayland/lvgl.sh
+</code></pre>
+<p>The script <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/wayland/lvgl.sh"><code>lvgl.sh</code></a> copies <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/wayland/run.sh"><code>run.sh</code></a> from <code>~/lvgl-wayland/wayland</code> to the Click Package Folder for File Manager...</p>
+<pre class=" language-text"><code class=" language-text">/usr/share/click/preinstalled/.click/users/@all/com.ubuntu.filemanager
+</code></pre>
+<p>In a few seconds we'll see the message...</p>
+<pre class=" language-text"><code class=" language-text">*** Tap on File Manager icon on PinePhone
+</code></pre>
+<p>Go ahead and tap the File Manager icon on PinePhone. </p>
+<p>Our LVGL App shall run instead of the File Manager.</p>
+<p>In the SSH console, press <code>Ctrl-C</code> to stop the log display.</p>
+<p>The log file for the app is located at...</p>
+<pre class=" language-text"><code class=" language-text">/home/phablet/.cache/upstart/application-click-com.ubuntu.filemanager_filemanager_0.7.5.log
+</code></pre>
+<p>The log for the Wayland Compositor <code>unity-system-compositor</code> may be useful for troubleshooting...</p>
+<pre class=" language-text"><code class=" language-text">/home/phablet/.cache/upstart/unity8.log
+</code></pre>
+<p>Copy the log files to our machine like this...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token function">scp</span> -i ~/.ssh/pinephone_rsa phablet@192.168.1.160:/home/phablet/.cache/upstart/application-click-com.ubuntu.filemanager_filemanager_0.7.5.log <span class="token builtin class-name">.</span>
+<span class="token function">scp</span> -i ~/.ssh/pinephone_rsa phablet@192.168.1.160:/home/phablet/.cache/upstart/unity8.log <span class="token builtin class-name">.</span>
+</code></pre>
+<p><a href="https://github.com/lupyuen/lvgl-wayland/blob/master/logs">Check out the sample logs</a></p>
+<h1 id="overcome-apparmor-security-on-ubuntu-touch" class="section-header"><a href="#overcome-apparmor-security-on-ubuntu-touch">13 Overcome AppArmor Security on Ubuntu Touch</a></h1>
+<p>To understand Wayland, AppArmor and Ubuntu Touch Security, let's look inside the script <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/wayland/lvgl.sh"><code>lvgl.sh</code></a> and discover how it launches our <code>lvgl</code> app...</p>
+<ol>
+<li>
+<p>Our <code>lvgl</code> app doesn't have a close button, so let's terminate the app if it's already running...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Kill the app if it's already running</span>
+<span class="token function">pkill</span> lvgl
+</code></pre>
+</li>
+<li>
+<p>In Ubuntu Touch, <strong>User Directories</strong> (like our Home Directory) are writeable by default.</p>
+<p><strong>System Directories</strong> (like <code>/usr/share</code>) are mounted with read-only access, to prevent tampering of system files. (Think malware)</p>
+<p>Since we're Superuser, we may remount System Directories with read-write access...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Make system folders writeable</span>
+<span class="token function">sudo</span> <span class="token function">mount</span> -o remount,rw /
+</code></pre>
+</li>
+<li>
+<p><em>Why do we need read-write access?</em></p>
+<p>Because we'll be copying our app <code>lvgl</code> and the script <code>run.sh</code> to a System Directory...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Copy app to File Manager folder</span>
+<span class="token builtin class-name">cd</span> wayland
+<span class="token function">sudo</span> <span class="token function">cp</span> lvgl /usr/share/click/preinstalled/.click/users/@all/com.ubuntu.filemanager
+
+<span class="token comment"># Copy run script to File Manager folder</span>
+<span class="token function">sudo</span> <span class="token function">cp</span> run.sh /usr/share/click/preinstalled/.click/users/@all/com.ubuntu.filemanager
+</code></pre>
+</li>
+<li>
+<p><em>What's this folder <code>/usr/share/click/preinstalled/.click/users/@all/com.ubuntu.filemanager</code>?</em></p>
+<p>This is the <a href="http://docs.ubports.com/en/latest/appdev/platform/click.html#security-and-app-isolation"><strong>Click Package</strong></a> folder for File Manager.</p>
+<p>Ubuntu Touch Apps (like File Manager) are packaged as Click Packages for installation on our phones.</p>
+<p>When the app is installed, Ubuntu Touch extracts the Click Package into a folder under <code>/usr/share/click</code>.</p>
+<p>Inside the Click Package folder we'll find the executables, libraries and data files that are needed for running the app.</p>
+<p>The folder also contains a <code>.desktop</code> file. (Earlier we've seen <code>com.ubuntu.filemanager.desktop</code> for File Manager) This file tells Ubuntu Touch how to launch the app.</p>
+</li>
+<li>
+<p><em>Does the app run as our user account <code>phablet</code>?</em></p>
+<p>Nope. For security, Ubuntu Touch Apps run under an account with restricted privileges: <code>clickpkg</code></p>
+<p>This account has no access to our <code>phablet</code> files. That's why we copy the <code>lvgl</code> app and <code>run.sh</code> script to the Click Package folder, which is accessible by <code>clickpkg</code></p>
+<p>We set the ownership of <code>lvgl</code> and <code>run.sh</code> to <code>clickpkg</code> so that it can execute the files...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Set ownership on the app and the run script</span>
+<span class="token function">sudo</span> <span class="token function">chown</span> clickpkg:clickpkg /usr/share/click/preinstalled/.click/users/@all/com.ubuntu.filemanager/lvgl
+<span class="token function">sudo</span> <span class="token function">chown</span> clickpkg:clickpkg /usr/share/click/preinstalled/.click/users/@all/com.ubuntu.filemanager/run.sh
+</code></pre>
+</li>
+<li>
+<p>Our <code>lvgl</code> app and <code>run.sh</code> script have been staged in the Click Package folder.</p>
+<p>We ask the human to tap the File Manager icon...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Start the File Manager</span>
+<span class="token builtin class-name">echo</span> <span class="token string">"*** Tap on File Manager icon on PinePhone"</span>
+</code></pre>
+</li>
+<li>
+<p>Ubuntu Touch launches our <code>lvgl</code> app. As our app runs, it logs debugging messages to Standard Output and Standard Error.</p>
+<p>The messages are captured in this log file...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Monitor the log file</span>
+<span class="token builtin class-name">echo</span> <span class="token operator">&gt;</span>/home/phablet/.cache/upstart/application-click-com.ubuntu.filemanager_filemanager_0.7.5.log
+<span class="token function">tail</span> -f /home/phablet/.cache/upstart/application-click-com.ubuntu.filemanager_filemanager_0.7.5.log
+</code></pre>
+</li>
+</ol>
+<p><em>Why can't we run our <code>lvgl</code> app from the Terminal Command Line?</em></p>
+<p>Because Ubuntu Touch's Wayland Service stops unauthorized processes from grabbing the Compositor...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-security.jpg" alt="Stopped by Wayland Security"></p>
+<p>We see this in the Wayland Compositor log: <code>/home/phablet/.cache/upstart/unity8.log</code></p>
+<pre class=" language-text"><code class=" language-text">ApplicationManager REJECTED connection from app with pid 6710 
+as it was not launched by upstart, and no desktop_file_hint is specified
+</code></pre>
+<p>That's why we need to inject <code>lvgl</code> into File Manager... So that Wayland thinks that the File Manager is grabbing the Compositor.</p>
+<p><em>Why did we choose the File Manager app instead of another app like Camera?</em></p>
+<p>Because File Manager has Unconfined AppArmor Permissions... It can do anything! </p>
+<p>(But still restricted by the <code>clickpkg</code> user permissions)</p>
+<p>Look at the <a href="http://docs.ubports.com/en/latest/appdev/platform/apparmor.html">AppArmor Policy</a> for the File Manager App: <a href="https://gitlab.com/ubports/apps/filemanager-app/-/blob/master/filemanager.apparmor"><code>filemanager.apparmor</code></a></p>
+<pre class=" language-json"><code class=" language-json"><span class="token punctuation">{</span>
+    <span class="token property">"policy_version"</span><span class="token operator">:</span> <span class="token number">16.04</span><span class="token punctuation">,</span>
+    <span class="token property">"template"</span><span class="token operator">:</span> <span class="token string">"unconfined"</span><span class="token punctuation">,</span>
+    <span class="token property">"policy_groups"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>Compare this with the AppArmor Policy for the Camera App: <a href="https://gitlab.com/ubports/apps/camera-app/-/blob/master/camera.apparmor"><code>camera.apparmor</code></a></p>
+<pre class=" language-json"><code class=" language-json"><span class="token punctuation">{</span>
+    <span class="token property">"policy_groups"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">"picture_files"</span><span class="token punctuation">,</span>
+        <span class="token string">"video_files"</span><span class="token punctuation">,</span>
+        <span class="token string">"camera"</span><span class="token punctuation">,</span>
+        <span class="token string">"audio"</span><span class="token punctuation">,</span>
+        <span class="token string">"video"</span><span class="token punctuation">,</span>
+        <span class="token string">"usermetrics"</span><span class="token punctuation">,</span>
+        <span class="token string">"content_exchange"</span><span class="token punctuation">,</span>
+        <span class="token string">"content_exchange_source"</span><span class="token punctuation">,</span>
+        <span class="token string">"location"</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"policy_version"</span><span class="token operator">:</span> <span class="token number">16.04</span><span class="token punctuation">,</span>
+    <span class="token property">"read_path"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">"@{PROC}/*/mounts"</span><span class="token punctuation">,</span>
+        <span class="token string">"/dev/disk/by-label/"</span>
+    <span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>The AppArmor Policy says that the Camera App may only access selected
+ features (like recording audio and video). And it's only allowed to 
+read specific paths (like <code>/dev/disk/by-label</code>).</p>
+<p><code>strace</code> won't work with the AppArmor Policy for Camera App. </p>
+<p>So for tracing our app with <code>strace</code>, we "borrow" the Unconfined AppArmor Policy for File Manager.</p>
+<p>To troubleshoot problems with AppArmor, check the system log in <code>/var/log/syslog</code></p>
+<p><a href="https://github.com/lupyuen/lvgl-wayland/blob/master/logs/syslog">Check out my <code>syslog</code></a></p>
+<h1 id="what-i-like-about-ubuntu-touch-on-pinephone" class="section-header"><a href="#what-i-like-about-ubuntu-touch-on-pinephone">14 What I like about Ubuntu Touch on PinePhone</a></h1>
+<p>While attempting to port the <a href="https://lupyuen.github.io/pinetime-rust-mynewt/articles/gotk3">PineTime Companion App</a> to PinePhone with GTK (<a href="https://github.com/lupyuen/pinephone-mir#wayland-messages-for-gtk-app">and failing miserably</a>), I had these thoughts...</p>
+<ol>
+<li>
+<p><strong>AppArmor is good</strong>, because iOS and Android have similar apps security</p>
+</li>
+<li>
+<p><strong>Read-only file system is good</strong> (system files are 
+read-only by default, user files are read-write). Helps to prevent 
+security holes. (Even PineTime has a read-only Flash ROM)</p>
+</li>
+<li>
+<p><strong>Why is Qt supported on Ubuntu Touch and not GTK?</strong> Because building a Linux mobile app requires mobile-friendly widgets. </p>
+<p>I think Qt has more mobile-friendly widgets, even through the internal plumbing is way too complicated. </p>
+<p>When I get GTK running on Ubuntu Touch, I will face the same problem 
+with widgets. And I have to make GTK widgets look and feel consistent 
+with Qt / Ubuntu Touch widgets.</p>
+<p>That's why I decided to move away from GTK and focus on a simpler widget framework with LVGL.</p>
+</li>
+<li>
+<p><strong>Older kernel base</strong> in Ubuntu Touch... I don't do kernel hacking much so it doesn't matter to me. </p>
+<p>I think for mobiles we only need to support a few common chipsets, so an older kernel is probably fine. </p>
+<p>That explains why Raspberry Pi 4 isn't supported by Ubuntu Touch... The hardware is just too new.</p>
+</li>
+<li>
+<p>The issues I'm struggling with now... Wayland, GTK3, ... are actually really old stuff. Updating the kernel won't help.</p>
+</li>
+<li>
+<p><strong>Ubuntu Touch is pure Wayland</strong>, none of the legacy X11 stuff. Xwayland is not even there (unless you use the Libertine containers ugh). </p>
+<p>The pure Wayland environment causes GTK to break, because GTK assumes some minimal X11 support (i.e. Xwayland).</p>
+<p>It's better to start from scratch with a toolkit that's not based on X11, like LVGL.</p>
+</li>
+<li>
+<p>So Ubuntu Touch is not really that bad for PinePhone... It's just painful for building non-Qt apps. 🙂</p>
+</li>
+</ol>
+<p>After <a href="https://twitter.com/UBports/status/1282934927806398464">posting my thoughts</a>, the UBports, GNOME and Xfce Community responded with encouraging and insightful notes...</p>
+<h2 id="ubports-on-ubuntu-touch-wayland-and-mir" class="section-header"><a href="#ubports-on-ubuntu-touch-wayland-and-mir">14.1 UBports on Ubuntu Touch, Wayland and Mir</a></h2>
+<ul>
+<li>
+<p><a href="https://twitter.com/UBports/status/1282936886311428096?s=09">Ubuntu Touch supports Wayland only on non-Android devices</a> like PinePhone</p>
+</li>
+<li>
+<p><a href="https://twitter.com/UBports/status/1282934927806398464?s=09">Ubuntu Touch uses older kernels on Android devices</a>, only because that's the only way to run on those devices. PinePhone uses a newer kernel.</p>
+</li>
+<li>
+<p><a href="https://twitter.com/UBports/status/1282936886311428096">UBports is fixing that with Halium9</a>, a Hardware Abstraction Layer based on parts of AOSP 9 and other hardware enablement components</p>
+</li>
+</ul>
+<p><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Mir-2019-Kicking">Read about Unity8 / Mir / Lomiri's complicated history</a></p>
+<p><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Unity-8-Renamed-To-Lomiri">Another article</a></p>
+<h2 id="gnome-and-gtk-on-wayland" class="section-header"><a href="#gnome-and-gtk-on-wayland">14.2 GNOME and GTK on Wayland</a></h2>
+<ul>
+<li>
+<p><a href="https://mastodon.social/@ebassi/104511735257435944">GNOME Shell developers are working into making X11 completely optional</a></p>
+</li>
+<li>
+<p>GTK can already be built without X11 backend</p>
+</li>
+</ul>
+<h2 id="wayland-on-xfce" class="section-header"><a href="#wayland-on-xfce">14.3 Wayland on Xfce</a></h2>
+<ul>
+<li>
+<p><a href="https://twitter.com/XfceNation/status/1284842929895301120?s=09">Proprietary Nvidia graphics drivers didn't have Wayland support out of the box</a> as they wanted to use EGLStreams rather than GBM. So Nvidia did the work to get GNOME and KDE to support EGLStreams.</p>
+</li>
+<li>
+<p><a href="https://twitter.com/XfceNation/status/1284854254092513285?s=09">Only GNOME and KDE have Wayland support and the support isn't feature complete compared to X11</a>, which is why most distros with GNOME and KDE editions still do not default to Wayland</p>
+</li>
+</ul>
+<h1 id="touch-input-for-lvgl-on-wayland" class="section-header"><a href="#touch-input-for-lvgl-on-wayland">15 Touch Input for LVGL on Wayland</a></h1>
+<p>I'm sorry the port of LVGL on Wayland to PinePhone is incomplete, and I am now working on other PineTime Smart Watch projects.</p>
+<p>The Touch Input needs to be ported for LVGL like this...</p>
+<ul>
+<li><a href="https://docs.lvgl.io/latest/en/html/porting/indev.html">LVGL Input Device Interface</a></li>
+</ul>
+<p>The LVGL Input Driver needs to be implemented with Wayland (without X) like this...</p>
+<ul>
+<li>
+<p><a href="https://jan.newmarch.name/Wayland/Input/">Programming Wayland Clients - Input</a></p>
+</li>
+<li>
+<p><a href="https://wayland-book.com/seat.html">The Wayland Protocol - Seats: Handling input</a></p>
+</li>
+</ul>
+<p>Also please take care of the LVGL Tick Interface. We need to call&nbsp;<code>lv_tick_inc()</code> periodically or our LVGL Display Driver won't flush when calling <code>lv_task_handler()</code>...</p>
+<ul>
+<li><a href="https://docs.lvgl.io/latest/en/html/porting/tick.html">LVGL Tick Interface</a></li>
+</ul>
+<p>I noticed this behaviour so I called <code>lv_tick_inc(100)</code> before <code>lv_task_handler()</code>...</p>
+<ul>
+<li><a href="https://github.com/AppKaki/lvgl-wasm/blob/master/wasm/lvgl.c#L81-L88"><code>github.com/AppKaki/lvgl-wasm/wasm/lvgl.c</code></a></li>
+</ul>
+<p>That's the code I used for my latest project, a WebAssembly LVGL Simulator for PineTime Smart Watch...</p>
+<ul>
+<li>
+<p><a href="https://github.com/AppKaki/lvgl-wasm/blob/master/README.md"><code>lvgl-wasm</code>: PineTime Watch Face Simulator with LVGL ported to WebAssembly</a></p>
+</li>
+<li>
+<p><a href="https://lupyuen.github.io/pinetime-rust-mynewt/articles/simulator">Preview PineTime Watch Faces in your Web Browser with WebAssembly</a></p>
+</li>
+</ul>
+<h1 id="whats-next" class="section-header"><a href="#whats-next">16 What's Next?</a></h1>
+<p>Wayland feels like New Underwear... And it needs a New App Toolkit like LVGL to make us comfortable.</p>
+<p>If you're keen to help make <strong>LVGL the Newer, Simpler App Toolkit</strong> on Wayland, Ubuntu Touch and PinePhone, <a href="https://github.com/lupyuen">please lemme know</a>! 😀</p>
+<ul>
+<li>
+<p><a href="https://github.com/sponsors/lupyuen">Sponsor me a coffee</a></p>
+</li>
+<li>
+<p><a href="https://forum.pine64.org/showthread.php?tid=10833">Discuss this article on Pine64 Forum</a></p>
+</li>
+<li>
+<p><a href="https://lupyuen.github.io/">Check out my articles</a></p>
+</li>
+<li>
+<p><a href="https://lupyuen.github.io/rss.xml">RSS Feed</a></p>
+</li>
+</ul>
+<p><em>Got a question, comment or suggestion? Create an Issue or submit a Pull Request here...</em></p>
+<p><a href="https://github.com/lupyuen/pinetime-rust-mynewt/blob/master/rust/app/src/wayland.md"><code>pinetime-rust-mynewt/rust/ app/src/wayland.md</code></a></p>
+<h1 id="configure-ssh-on-pinephone" class="section-header"><a href="#configure-ssh-on-pinephone">17 Configure SSH on PinePhone</a></h1>
+<p><strong>First Thing</strong> to do when we get our new PinePhone: Open the PinePhone Back Cover and <a href="https://twitter.com/RealDanct12/status/1286969529516453888?s=20"><strong>Remove the Battery Insulation Sticker!</strong></a></p>
+<p>(Can't believe I missed that!)</p>
+<p><strong>Second Thing</strong>: Protect the SSH Service on PinePhone with <strong>SSH Keys</strong>. And start the SSH Service only when necessary.</p>
+<p>Here's how...</p>
+<h2 id="generate-ssh-keys" class="section-header"><a href="#generate-ssh-keys">17.1 Generate SSH Keys</a></h2>
+<ol>
+<li>
+<p>On our Computer (not PinePhone), open a Command Prompt. Enter this (and fill in our email)...</p>
+<pre class=" language-bash"><code class=" language-bash">ssh-keygen -t rsa -b <span class="token number">4096</span> -C <span class="token string">"your_email@example.com"</span>
+</code></pre>
+</li>
+<li>
+<p>When prompted...</p>
+<pre class=" language-text"><code class=" language-text">Enter a file in which to save the key
+</code></pre>
+<p>Press <code>Enter</code>. This stores the new SSH Key in the <code>.ssh</code> folder in our Home Directory.</p>
+</li>
+<li>
+<p>When prompted...</p>
+<pre class=" language-text"><code class=" language-text">Enter a file in which to save the key
+</code></pre>
+<p>Enter...</p>
+<pre class=" language-text"><code class=" language-text">pinephone_rsa
+</code></pre>
+<p>We'll create an SSH Key Pair named <code>pinephone_rsa</code> (Private Key) and <code>pinephone_rsa.pub</code> (Public Key)</p>
+</li>
+<li>
+<p>When prompted...</p>
+<pre class=" language-text"><code class=" language-text">Enter passphrase
+</code></pre>
+<p>Press <code>Enter</code>. We won't need a passphrase unless our PinePhone needs to be super-secure.</p>
+</li>
+</ol>
+<p>This creates an SSH Key Pair in the <code>.ssh</code> folder in our Home Directory...</p>
+<ul>
+<li>
+<p><code>pinephone_rsa</code> contains the Private Key. Never give the Private Key to others!</p>
+</li>
+<li>
+<p><code>pinephone_rsa.pub</code> contains the Public Key. We'll copy this to PinePhone now.</p>
+</li>
+</ul>
+<p>(<a href="https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key">Adapted from this doc</a>)</p>
+<h2 id="install-ssh-keys" class="section-header"><a href="#install-ssh-keys">17.2 Install SSH Keys</a></h2>
+<ol>
+<li>
+<p>Copy <code>pinephone_rsa.pub</code> from the <code>.ssh</code> folder in our Home Directory to a MicroSD Card.</p>
+</li>
+<li>
+<p>Insert the MicroSD Card into PinePhone. Copy <code>pinephone_rsa.pub</code> to our Home Directory on PinePhone.</p>
+<p>(Check the section "Copy Files from MicroSD Card on PinePhone" below)</p>
+</li>
+<li>
+<p>Tap the Terminal icon on PinePhone. Enter...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Go to home directory</span>
+<span class="token builtin class-name">cd</span>
+
+<span class="token comment"># If .ssh folder doesn't exist, create it</span>
+<span class="token function">mkdir</span> .ssh
+<span class="token function">chmod</span> <span class="token number">700</span> .ssh
+
+<span class="token comment"># Set public key as the authorized key</span>
+<span class="token function">cp</span> pinephone_rsa.pub .ssh/authorized_keys
+<span class="token function">chmod</span> <span class="token number">600</span> .ssh/authorized_keys
+
+<span class="token comment"># Show the SSH files</span>
+<span class="token function">ls</span> -la ~/.ssh
+</code></pre>
+<p>We should see this...</p>
+<pre class=" language-text"><code class=" language-text">drwx------  2 phablet phablet 4096 Jul  7 20:06 .
+drwxr-xr-x 28 phablet phablet 4096 Jul 24 11:38 ..
+-rw-------  1 phablet phablet  743 Jul  7 20:08 authorized_keys
+</code></pre>
+<p>Check that the permissions (<code>rw</code>) and owner (<code>phablet</code>) are correct.</p>
+</li>
+</ol>
+<h2 id="start-ssh-service" class="section-header"><a href="#start-ssh-service">17.3 Start SSH Service</a></h2>
+<p>To start the SSH Service on PinePhone, open the Terminal app.</p>
+<p>Create a file named <code>a</code>...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token function">nano</span> a
+</code></pre>
+<p>Type this script into the <code>a</code> file...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token shebang important">#!/bin/sh</span>
+<span class="token comment"># Script to start SSH service and show IP address</span>
+
+<span class="token comment"># Start SSH service</span>
+<span class="token function">sudo</span> <span class="token function">service</span> <span class="token function">ssh</span> start
+
+<span class="token comment"># Show IP address</span>
+<span class="token function">ifconfig</span> <span class="token operator">|</span> <span class="token punctuation">\</span>
+    <span class="token function">grep</span> -v <span class="token string">"127.0.0.1"</span> <span class="token operator">|</span> <span class="token punctuation">\</span>
+    <span class="token function">grep</span> <span class="token string">"inet addr:"</span>
+
+<span class="token comment"># Ping repeatedly to keep WiFi alive</span>
+<span class="token function">ping</span> google.com
+</code></pre>
+<p>Save the file and exit <code>nano</code>.</p>
+<p>(Or download the file from <a href="https://github.com/lupyuen/lvgl-wayland/blob/master/a"><code>lvgl-wayland/a</code></a> and copy via a MicroSD Card. Check the next section for instructions.)</p>
+<p>When we're ready do coding on PinePhone, enter this at the Terminal command line...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token builtin class-name">.</span> a 
+</code></pre>
+<p>(There's a space between "<code>.</code>" and "<code>a</code>")</p>
+<p>The script starts the SSH Service and displays the IP address for PinePhone...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-ssh.jpg" alt="Starting SSH Service on PinePhone"></p>
+<p>From our Computer, we'll connect to PinePhone at the IP adddress indicated by <code>inet addr</code>, say <code>192.168.1.160</code>...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token function">ssh</span> -i ~/.ssh/pinephone_rsa phablet@192.168.1.160
+</code></pre>
+<p>And that's how we access PinePhone via SSH!</p>
+<p>When we press PinePhone's power button to switch off PinePhone, we'll see ths amusing message from olden times...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-halt.jpg" alt="Powering off PinePhone"></p>
+<p>If typing on a touch keyboard is not your thing, try copying the files from a MicroSD card...</p>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-sd.jpg" alt="How we insert a MicroSD Card into PinePhone at night"></p>
+<p><em>How we insert a MicroSD Card into PinePhone at night</em></p>
+<h1 id="copy-files-from-microsd-card-on-pinephone" class="section-header"><a href="#copy-files-from-microsd-card-on-pinephone">18 Copy Files from MicroSD Card on PinePhone</a></h1>
+<p>It's useful to transfer files to PinePhone via MicroSD Card, like SSH Keys and the SSH Script <code>a</code> above.</p>
+<p>(Sadly PinePhone on Ubuntu Touch doesn't allow receiving files over Bluetooth)</p>
+<p>The MicroSD card on PinePhone doesn't appear in the File Manager unless we mount it.</p>
+<p>Tap the Terminal icon on PinePhone and enter the following...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token function">ls</span> -l /dev/disk/by-label
+</code></pre>
+<p>We should see something like this...</p>
+<pre class=" language-text"><code class=" language-text">lrwxrwxrwx 1 root root 15 Jul 23 22:24 BOOT_MNJRO -&gt; ../../mmcblk0p1
+lrwxrwxrwx 1 root root 15 Jul 23 22:24 cache -&gt; ../../mmcblk2p8
+lrwxrwxrwx 1 root root 15 Jul 23 22:24 ROOT_MNJRO -&gt; ../../mmcblk0p2
+lrwxrwxrwx 1 root root 16 Jul 23 22:24 userdata -&gt; ../../mmcblk2p10
+</code></pre>
+<p>These are the Partition Labels on our MicroSD Card. </p>
+<p>Let's say we wish to mount the MicroSD Card partition <code>ROOT_MNJRO</code>, which links to <code>/dev/mmcblk0p2</code>...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token function">mkdir</span> /tmp/sdcard
+<span class="token function">sudo</span> <span class="token function">mount</span> /dev/mmcblk0p2 /tmp/sdcard
+<span class="token function">ls</span> -l /tmp/sdcard
+</code></pre>
+<p>(If we don't see our Patition Label, try mounting the numbered partitions anyway: <code>/dev/mmcblk0p1</code>, <code>p2</code>, <code>p3</code>, ...)</p>
+<p>We should see the contents of our MicroSD Card.</p>
+<p>The MicroSD Card will now appear in File Manager as <code>/tmp/sdcard</code>, ready for us to copy the files.</p>
+<p>Or just copy files from the Command Line like so...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token function">cp</span> /tmp/sdcard/a ~
+</code></pre>
+<p>When we're done, unmount our MicroSD Card...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token function">sudo</span> <span class="token function">umount</span> /tmp/sdcard
+</code></pre>
+<p><img src="Wayland%20and%20LVGL%20on%20PinePhone%20with%20Ubuntu%20Touch_files/wayland-weston.png" alt="LVGL App on Pinebook Pro"></p>
+<h1 id="build-and-test-lvgl-app-on-linux" class="section-header"><a href="#build-and-test-lvgl-app-on-linux">19 Build and Test LVGL App on Linux</a></h1>
+<p>Our LVGL App works on Linux machines like Pinebook Pro...</p>
+<pre class=" language-bash"><code class=" language-bash"><span class="token comment"># Download the source code</span>
+<span class="token function">git</span> clone https://github.com/lupyuen/lvgl-wayland
+<span class="token builtin class-name">cd</span> lvgl-wayland
+
+<span class="token comment"># Build the lvgl executable</span>
+<span class="token function">make</span>
+
+<span class="token comment"># Install Weston Wayland Compositor...</span>
+<span class="token comment"># For Arch Linux and Manjaro:</span>
+<span class="token function">sudo</span> pacman -S weston
+
+<span class="token comment"># For Other Distros:</span>
+<span class="token comment"># Check https://github.com/wayland-project/weston</span>
+
+<span class="token comment"># Start the Weston Wayland Compositor with the PinePhone screen dimensions</span>
+weston --width<span class="token operator">=</span><span class="token number">720</span> --height<span class="token operator">=</span><span class="token number">1398</span> <span class="token operator">&amp;</span>
+
+<span class="token comment"># Run the lvgl executable</span>
+./wayland/lvgl
+</code></pre>
+
+    
+
+</body></html>

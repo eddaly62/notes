@@ -488,7 +488,8 @@ RE generator:
 https://regex-generator.olafneumann.org
 
 
-
+Abstract Data types
+--------------------
 Abstract data types, making structs opaque
 There contents can not be viewed or accessed by the app
 Essentialy they are made private
