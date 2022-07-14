@@ -227,6 +227,23 @@ graph {
     p1 -- p3;
 }
 
+Layouts:
+
+dot -“hierarchical” or layered drawings of directed graphs.
+neato -“spring model” layouts.
+fdp -stands for Force Directed Placement.
+sfdp -stands for Scalable Force Directed Placement.
+circo - circular layout.
+twopi -radial layout.
+osage - draws clustered graphs.
+patchwork -draws clustered graphs using a squarified treemap layout.
+
+Add to change layout:
+  	layout=circo;
+
+Add to change shape:
+    DAP_PATTERN_QUEUE [shape=box];
+
 
 
 gdb debugger
