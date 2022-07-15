@@ -399,6 +399,10 @@ dap repo:
 http://bitbucket.generaldigital.com:7990/projects/DAP/repos/dap/browse
 
 
+To branch and checkout at the same time:
+git checkout -b new_branch_name
+
+
 source (linux)
 ----------------
 Can use "source" to execute a text file that contains linux commands
