@@ -76,9 +76,22 @@ Building a shared library
 -------------------------
 Flags for gcc
 
-   -fPIC
+   -fPIC -shared
 
 PIC = position independant code
+
+
+Programs to query apps and libraries
+-------------------------------------
+
+nm <*.so>
+
+Shows what is in a shared librbary
+
+ldd <pgm>
+
+Shows the libraries used by the program
+
 
 
 C/C++ -> Settings -> Build Steps -> Post Processing
