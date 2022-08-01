@@ -92,6 +92,9 @@ ldd <pgm>
 
 Shows the libraries used by the program
 
+scc
+
+Checks cyclomatic complexity and other stats for the current working directory
 
 
 C/C++ -> Settings -> Build Steps -> Post Processing
