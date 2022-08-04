@@ -429,11 +429,11 @@ Use realpath() function to get full path from a realitive path
 
 Unit test utilities
 -------------------
-criterion *
+* criterion - https://criterion.readthedocs.io/en/master/intro.html
 unity ?
 cmock
 ceedling
-minunit *
+* minunit
 
 Programming Fonts
 ------------------
