@@ -78,7 +78,7 @@ Flags for gcc
 
    -fPIC -shared
 
-PIC = position independant code
+PIC = position independent code
 
 
 Programs to query apps and libraries
@@ -86,7 +86,7 @@ Programs to query apps and libraries
 
 nm <*.so>
 
-Shows what is in a shared librbary
+Shows what is in a shared library
 
 ldd <pgm>
 
@@ -95,6 +95,10 @@ Shows the libraries used by the program
 scc
 
 Checks cyclomatic complexity and other stats for the current working directory
+
+file
+
+Displays the type of file and what processor it is built for.
 
 
 C/C++ -> Settings -> Build Steps -> Post Processing
@@ -272,7 +276,7 @@ n - next
 p 'n'- display, where 'n' is a variable name
 ref - display refresh (will use often)
 list - list source code
-x/16xb [address]- examine 16 bytes formated in hex starting at address.
+x/16xb [address]- examine 16 bytes formatted in hex starting at address.
     x/16xb 0x555555556004
     good for looking at a variable or structure in hex.
 
@@ -423,9 +427,9 @@ source (linux)
 ----------------
 Can use "source" to execute a text file that contains linux commands
 
-realative paths
+relative paths
 ----------------
-Use realpath() function to get full path from a realitive path
+Use realpath() function to get full path from a relative path
 
 Unit test utilities
 -------------------
