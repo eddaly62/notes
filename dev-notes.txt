@@ -422,6 +422,9 @@ http://bitbucket.generaldigital.com:7990/projects/DAP/repos/dap/browse
 To branch and checkout at the same time:
 git checkout -b new_branch_name
 
+initialziing a repo:
+git config --global user.name "Ed Daly"
+git config --global user.email "edaly@generaldigital.com"
 
 source (linux)
 ----------------
