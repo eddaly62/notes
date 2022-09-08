@@ -32,11 +32,11 @@ for example:
 The compiler will search the paths given in the -L flags for the librarys specified with the -l option
 
 Now that your program compiles, it still may have a problem running.
-If it uses shared libraries that are not in commoninly searched path (/usr/lib, /lib) then you may get a "could not find library xxx error" when you run your program.
+If it uses shared libraries that are not in commonly searched path (/usr/lib, /lib) then you may get a "could not find library xxx error" when you run your program.
 
 There are two ways to fix this.
 
-1) set this enviroment variable, LD_LIBRARY_PATH, to the the path that your libraries are located. This is a short lived solution unless you add the setting to a script that gets run at start up
+1) set this environment variable, LD_LIBRARY_PATH, to the the path that your libraries are located. This is a short lived solution unless you add the setting to a script that gets run at start up
 
     LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/my_library/
     export LD_LIBRARY_PATH
@@ -52,7 +52,7 @@ If you go the $LD_LIBRARY_PATH route, you'll want to put that into your ~/.bashr
 
 The -Wl,-R part tells the resulting binary to also look for the library in /usr/local/lib at runtime before trying to use the one in /usr/lib/.
 
-Wl - are option is used to flag linker options, they are seperated by commas.
+Wl - are option is used to flag linker options, they are separated by commas.
 
 The -R option embeds the path to the libraries path in the program, so it knows were to go find them...ie the path needs to exist and be valid on the target
 
@@ -370,15 +370,60 @@ Uncomment to restore
 ssh
 ----
 ssh keys are stored on your machine.
-ls -l .ssh
+    ls -l .ssh
 
 Use:
 ssh-keygen
 to generate your own public key
 To copy your public key to a remote server
-ssh-copy-id root@192.168.20.64 (target ip address)
+    ssh-copy-id root@192.168.20.64 (target ip address)
 
-This renoved the need to enter a password to remote shell
+ssh-keygen will prompt you for a password. Use the password for the login on the target machine.
+You can test the (public) key by running
+    ssh root@192.168.20.64 (target ip address)
+
+This will prompt you for a password to unlock the key,
+use the password you entered to make the key, which should match the password of the login of the remote machine.
+
+This removes the need to enter a password to remote shell
+
+
+If connection is refused:
+
+check if ssh is installed:
+    ssh
+
+if its not installed, install it:
+    sudo apt install openssh-client
+
+ssh server may not be running, see if it is running this:
+    sudo service ssh status
+
+Could be that the port is closed, usually ssh is on port 22.
+to check which port ssh server is being run on:
+    grep Port /etc/ssh/sshd_config
+
+see if ssh daemon is running on target
+    systemctl status sshd
+
+if you get, ....sshd.service could not be found
+then you need to install the openssh-server package
+ sudo apt-get install openssh-server
+
+if the ssh daemon is not running then start it:
+    systemctl start sshd
+
+to make the ssh daemon start at start up:
+    sudo systemctl enable ssh
+
+So you can ssh and scp remotely but you are get permission denied when you try to scp as root.
+Open this file:
+    vi /etc/ssh/sshd_config
+
+look for:
+    PermitRootLogin no
+
+uncomment it and change it to yes
 
 temp files
 -----------
