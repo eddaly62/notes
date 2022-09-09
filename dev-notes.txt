@@ -22,7 +22,7 @@ Linker Options
 
 -L/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/usr/lib -Wl,-rpath-link,/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/usr/lib -L/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/lib -Wl,-rpath-link,/home/gdc419/Images/Apalis-iMX6_Reference-Multimedia-Image-upstream-Tezi_5.6.0+build.18/lib
 
--I<include path> - tells compiler were to seacrh for libraries after the standard paths are searched
+-I<include path> - tells compiler were to search for libraries after the standard paths are searched
 
 
 -l<shared library>
@@ -111,6 +111,10 @@ scp ~/Projects/lv_port_linux_frame_buffer/Debug/lvglfb root@192.168.20.64:/home/
 Description:
 Copy fbtest Debug to Target
 Copy lvglfb Debug to Target
+
+To make a directory remotely using ssh, you can do something like this
+    TESTDIR="$HOSTNAME"
+    ssh user@server.com "mkdir -p ~/$TESTDIR/test"
 
 
 Symbolic links
