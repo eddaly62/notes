@@ -759,6 +759,28 @@ linux app:
 also:
     clang-format
 
+mounting a usb driver
+---------------------
+
+Create a mount point:
+    mkdir /media/usb-drive
+
+Plug it in.
+When it enumerates...the display will indicate what type it is (usually sdb)
+
+To see which device is your usb stick
+Use ls /dev
+Look for the sdb devices when its plugged in and when its not plugged in to determine which is yours.
+The one that disappears when its unplugged is your device.
+
+Once you know, you can mount it
+
+mount /dev/sdb1 /media/usb-driver
+
+Then access it by writing and reading to "usb-driver"
+
+When done unmount it
+    umount /media/usb-drive
 
 
 
