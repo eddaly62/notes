@@ -147,6 +147,25 @@ tar - unzip
 ----------------
 tar xvf tarfilename
 
+tar - Create
+--------------
+tar -czvf file.tar.gz directory
+
+example:
+sudo tar -czvf allegro5-libs-arm.tar.gz /usr/local/lib/allegro5-libs-arm
+
+note: this archive is compressed and the path is part of the archive (i.e. usr/local/lib)
+      this may not be desirable if you want to unzip in a different path
+The gz file extension is short for gzip (extension is tar.gz or .tgz)
+
+where:
+    -c - instructs tar to create a new archive.
+    -z - sets the compression method to gzip.
+    -f archive-name.tar.gz - specifies the archive name.
+    -v to make the tar command more visible and print the names of the files being added
+       to the archive on the terminal.
+
+sudo tar -czvf arm-linux-gnueabihf.tar.gz arm-linux-gnueabihf
 
 To test input events
 ---------------------
@@ -782,5 +801,11 @@ Then access it by writing and reading to "usb-driver"
 When done unmount it
     umount /media/usb-drive
 
+Copy a directory recursively, preserving links
+----------------------------------------------
+
+Follows the symbolic links and creates copis of the actual files
+cp -rL /source /destination
+r = recursive L = follow and expand symlinks
 
 
