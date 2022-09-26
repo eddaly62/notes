@@ -80,6 +80,8 @@ Flags for gcc
 
 PIC = position independent code
 
+Note: do not list libs before obj's on command line or you will get errors
+
 
 Programs to query apps and libraries
 -------------------------------------
@@ -559,7 +561,16 @@ To see all the strings in a program:
 strings <pgm>
 
 To see all the symbols:
-readelf --symbols <pgm>
+    readelf --symbols <pgm>
+
+To see all the shared libraries
+    readelf -a <pgm> | grep Shared
+
+To see segment and sections:
+    readelf --segments <pgm>
+
+To see the interpreter that the program will use, needs to match what is on the target
+    readelf -a <pgm> | grep interpreter
 
 To see the symbol table:
 objdump -t <pgm>
@@ -570,8 +581,6 @@ objdump -s <pgm>
 To disassemble the pgm:
 objdump -d <pgm>
 
-To see segment and sections:
-readelf --segments <pgm>
 
 To remove al the symbols from a pgm:
 strip <pgm>
@@ -812,5 +821,10 @@ Works:
 To preserve the links while copying using cp, us the -P flag
 cp -P /home/gdc419/arm-linux-gnueabihf/libX11.so* /home/gdc419/arm-libs
 
+Good Resources
+--------------
+
+Jacob Sorber on YouTube
+embeddedarmdev on YouTube
 
 
