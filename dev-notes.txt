@@ -803,9 +803,14 @@ When done unmount it
 
 Copy a directory recursively, preserving links
 ----------------------------------------------
-
+??
 Follows the symbolic links and creates copis of the actual files
 cp -rL /source /destination
 r = recursive L = follow and expand symlinks
+
+Works:
+To preserve the links while copying using cp, us the -P flag
+cp -P /home/gdc419/arm-linux-gnueabihf/libX11.so* /home/gdc419/arm-libs
+
 
 
