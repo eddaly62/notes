@@ -460,6 +460,10 @@ hex editors
 ghex
 hexdump
 
+hex viewers
+-----------
+xxd <filename>
+
 stack
 ---------
 internal variable to find out stack frame address
@@ -572,18 +576,21 @@ To see segment and sections:
 To see the interpreter that the program will use, needs to match what is on the target
     readelf -a <pgm> | grep interpreter
 
+To see all the shared files used in a library or program
+    readelf -a <file> | grep Shared
+
 To see the symbol table:
-objdump -t <pgm>
+    objdump -t <pgm>
 
 To see the section table:
-objdump -s <pgm>
+    objdump -s <pgm>
 
 To disassemble the pgm:
-objdump -d <pgm>
+    objdump -d <pgm>
 
 
 To remove al the symbols from a pgm:
-strip <pgm>
+    strip <pgm>
 
 
 Valgrind
