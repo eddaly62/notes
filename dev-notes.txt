@@ -358,7 +358,7 @@ core dumps
 -----------
 
 ulimit -c
-see how much memory allcoated for a core dump file
+see how much memory allocated for a core dump file
 
 To change:
 ulimit -c unlimited
