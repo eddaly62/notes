@@ -147,7 +147,7 @@ Can also use rm to remove the links.
 
 tar - unzip
 ----------------
-tar xvf tarfilename
+tar -xvf tarfilename
 
 tar - Create
 --------------
@@ -161,11 +161,11 @@ note: this archive is compressed and the path is part of the archive (i.e. usr/l
 The gz file extension is short for gzip (extension is tar.gz or .tgz)
 
 where:
-    -c - instructs tar to create a new archive.
-    -z - sets the compression method to gzip.
-    -f archive-name.tar.gz - specifies the archive name.
-    -v to make the tar command more visible and print the names of the files being added
-       to the archive on the terminal.
+    -c = instructs tar to create a new archive.
+    -z = sets the compression method to gzip.
+    -f = archive-name.tar.gz - specifies the archive name.
+    -v = to make the tar command more visible and print the names of the files being added
+         to the archive on the terminal.
 
 sudo tar -czvf arm-linux-gnueabihf.tar.gz arm-linux-gnueabihf
 
@@ -830,8 +830,15 @@ cp -P /home/gdc419/arm-linux-gnueabihf/libX11.so* /home/gdc419/arm-libs
 
 Good Resources
 --------------
-
 Jacob Sorber on YouTube
 embeddedarmdev on YouTube
 
+Environment variables
+----------------------
 
+To see all variables:
+    env
+
+To add to a variable and export it:
+(for example to add /home/dave/work to the PATH variable)
+    export PATH=/home/dave/work:$PATH
