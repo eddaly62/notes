@@ -358,7 +358,7 @@ core dumps
 -----------
 
 ulimit -c
-see how much memory allcoated for a core dump file
+see how much memory allocated for a core dump file
 
 To change:
 ulimit -c unlimited
@@ -459,6 +459,10 @@ hex editors
 ------------
 ghex
 hexdump
+
+hex viewers
+-----------
+xxd <filename>
 
 stack
 ---------
@@ -572,18 +576,21 @@ To see segment and sections:
 To see the interpreter that the program will use, needs to match what is on the target
     readelf -a <pgm> | grep interpreter
 
+To see all the shared files used in a library or program
+    readelf -a <file> | grep Shared
+
 To see the symbol table:
-objdump -t <pgm>
+    objdump -t <pgm>
 
 To see the section table:
-objdump -s <pgm>
+    objdump -s <pgm>
 
 To disassemble the pgm:
-objdump -d <pgm>
+    objdump -d <pgm>
 
 
 To remove al the symbols from a pgm:
-strip <pgm>
+    strip <pgm>
 
 
 Valgrind
@@ -812,10 +819,14 @@ When done unmount it
 
 Copy a directory recursively, preserving links
 ----------------------------------------------
-
+??
 Follows the symbolic links and creates copis of the actual files
 cp -rL /source /destination
 r = recursive L = follow and expand symlinks
+
+Works:
+To preserve the links while copying using cp, us the -P flag
+cp -P /home/gdc419/arm-linux-gnueabihf/libX11.so* /home/gdc419/arm-libs
 
 Good Resources
 --------------
