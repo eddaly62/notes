@@ -842,3 +842,35 @@ To see all variables:
 To add to a variable and export it:
 (for example to add /home/dave/work to the PATH variable)
     export PATH=/home/dave/work:$PATH
+
+CPU Info
+-------------
+
+Get number of cores
+    nproc
+
+Get cpu info
+    more /proc/cpuinfo
+
+Username is not is suders file
+---------------------------------
+
+- login as root
+- go to /etc
+- run:
+    visudo
+- add the user (user_name) you want to have sudo privaliges:
+    user_name ALL=(ALL)  ALL
+- save file, changes should be immediate
+
+
+Allegro5 (5.2.7.0) Install Paths
+--------------------------------
+Headers:
+    /usr/local/include/allegro5
+Pkgconfig:
+    /usr/local/lib/pkgconfig
+Libraries:
+    /usr/local/lib
+
+

@@ -1,0 +1,11 @@
+Notes for native compile of DAP project
+
+Install compiler and make on the target:
+sudo apt-get install build-essential
+
+Copy dapterm project to target (work out of the root)
+Recommend do a clean before a copy.
+Alternatively, you could replace this step with a git clone to get the repo and then do git pull to update as needed
+scp -r ~/Projects/dapterm root@192.168.20.54:~/
+
+
