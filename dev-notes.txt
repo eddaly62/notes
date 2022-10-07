@@ -843,7 +843,7 @@ To add to a variable and export it:
 (for example to add /home/dave/work to the PATH variable)
     export PATH=/home/dave/work:$PATH
 
-CPU Info
+Get CPU Info
 -------------
 
 Get number of cores
@@ -852,7 +852,36 @@ Get number of cores
 Get cpu info
     more /proc/cpuinfo
 
-Username is not is suders file
+Type:
+    lscpu
+
+Type:
+    sudo dmidecode -t 4
+
+See how much RAM is free
+--------------------------
+
+Type:
+    free
+
+To see in megabytes:
+    free -m
+
+Details:
+    sudo lshw -short -C memory
+
+Better version of top
+Type:
+    htop
+
+Crazy version of htop (in python)
+To install:
+    sudo apt install python3-pip
+    sudo pip3 install bpytop
+To run:
+    bpytop
+
+Username is not in sudoers file
 ---------------------------------
 
 - login as root
@@ -872,5 +901,11 @@ Pkgconfig:
     /usr/local/lib/pkgconfig
 Libraries:
     /usr/local/lib
+
+X, X11
+-------
+
+To start xserver:
+    startx
 
 
