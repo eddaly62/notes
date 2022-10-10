@@ -934,4 +934,27 @@ Now add the mode to specific display
 Now select the prefered resolution
     xrandr --output eDP-1 --mode 1304x649
 
+Dynamic/Shared Libraries
+--------------------------
+
+These can be opened using the following functions:
+
+dlopen(path, RTLD_LAZY)
+dlsym()
+dlclose()
+
+Check the man page for the Details
+
+Programs to download Images
+----------------------------
+
+etcher
+uuu
+
+Change tty
+-----------
+chvt #
+# is the tty that you want to change to
+
+
 
