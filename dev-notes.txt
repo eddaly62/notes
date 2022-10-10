@@ -908,4 +908,30 @@ X, X11
 To start xserver:
     startx
 
+To check if xserver is running, try running one of these x programs:
+    xeyes
+    xclock
+
+Adding displays in linux
+-------------------------
+
+Check if a display setting is already availabe.
+Do this from a xwindow (only way)
+
+type:
+    xrandr
+should print what is available
+
+If you need to add a display resolution
+cvt 1300 649
+
+Now copy the Modeline output and past it with the -newmode command
+    xrandr --newmode "1304x649_60.00" 67.50 1304 1360 1488 1672 649 652 -hsync +vsync
+
+Now add the mode to specific display
+    xrandr --addmode eDP-1 "1304x649_60.00"
+
+Now select the prefered resolution
+    xrandr --output eDP-1 --mode 1304x649
+
 
