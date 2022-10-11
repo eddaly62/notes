@@ -956,5 +956,14 @@ Change tty
 chvt #
 # is the tty that you want to change to
 
+To run applications in the background
+-------------------------------------
+To run:
+<app_name>&
 
+To see all of the apps running in the background:
+jobs
+jobs -l
+
+Then can use "kill" to stop an application.
 
