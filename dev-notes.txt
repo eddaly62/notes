@@ -580,6 +580,10 @@ echo "john" >> names.txt
 clear screen:
     clear
 
+to delay:
+    sleep 2
+
+
 
 
 Inspecting Binaries
