@@ -586,6 +586,34 @@ put a .sh extension on it
 then make it executable
 chmod +x [filename]
 
+basics:
+
+display text
+    echo "text to display"
+
+input what is typed to variable x
+    read x
+
+prompt and get input and assign to variable x:
+    read -p "Pick a number: " x
+
+to display a variable:
+    echo "$x"
+
+display the contents of a file:
+    cat names.txt
+
+to add to a file via stdout:
+echo "john" >> names.txt
+
+clear screen:
+    clear
+
+to delay:
+    sleep 2
+
+
+
 
 Inspecting Binaries
 --------------------
