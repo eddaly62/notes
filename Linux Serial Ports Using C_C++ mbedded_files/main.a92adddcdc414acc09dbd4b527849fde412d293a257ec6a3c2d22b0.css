@@ -1,0 +1,1039 @@
+@charset "UTF-8";
+:root {
+  --main-color: #dc3545;
+  --main-color-light: #fff3f3;
+  --text-color: rgb(85, 85, 85);
+  --caption-font-color: rgb(100, 100, 100);
+  --caption-font-weight: 500;
+  --example-bg-color: #ffe3e3; }
+
+/* 800px is the cut-off point */
+* {
+  /* Don't set font family for everything, as it messes with code blocks */
+  /* font-family: 'avenir next' ,'avenir', sans-serif */ }
+
+/* ===================================== */
+/* HEADING NUMBERING */
+/* ===================================== */
+body {
+  counter-reset: h2counter; }
+
+.content h1 {
+  counter-reset: h2counter; }
+
+.content h2 {
+  counter-reset: h3counter; }
+
+.content h3 {
+  counter-reset: h4counter; }
+
+.content h2:before {
+  content: counter(h2counter) ".  ";
+  counter-increment: h2counter; }
+
+.content h3:before {
+  content: counter(h2counter) "." counter(h3counter) ".  ";
+  counter-increment: h3counter; }
+
+.content h4:before {
+  content: counter(h2counter) "." counter(h3counter) "." counter(h4counter) ".  ";
+  counter-increment: h4counter; }
+
+/* END OF HEADING NUMBERING */
+/* Use rem for body, use em for everything else */
+/* This controls the main font size */
+body {
+  font-size: 1.2rem; }
+
+input {
+  font-size: 0.9rem; }
+
+p, li, div {
+  /* O.k. size on mobile */
+  font-size: 2.5vw; }
+
+@media (min-width: 800px) {
+  p, li, div {
+    /* 1.3rem was a little too large */
+    font-size: 1.1rem; } }
+
+figcaption p {
+  font-size: 80%;
+  font-style: italic;
+  color: gray;
+  text-align: center; }
+
+/* Allow for special paragraphs that have centered text */
+div.content p.centered {
+  text-align: center; }
+
+/* Center single images on the page */
+div.box {
+  margin: auto; }
+
+/* ========================================================================= */
+/* OK, WARNING, ERROR SPANS                                                  */
+/* ========================================================================= */
+span.ok {
+  color: #00b300;
+  font-weight: bold; }
+
+span.warning {
+  color: orange;
+  font-weight: bold; }
+
+span.error {
+  color: red;
+  font-weight: bold; }
+
+/* ========================================================================= */
+/* LISTS                                                                     */
+/* ========================================================================= */
+.content ul {
+  padding-inline-start: 7vw; }
+  .content ul li {
+    padding: 0.3em 0px; }
+
+@media (min-width: 800px) {
+  .content ul {
+    padding-inline-start: 40px; } }
+
+.content #TableOfContents ul li {
+  padding: 0px 0px; }
+
+/* ========================================================================= */
+/* BREADCRUMBS                                                               */
+/* ========================================================================= */
+.breadcrumbs {
+  font-size: 1.0em; }
+
+.breadcrumbs li {
+  display: inline; }
+
+/* ========================================================================= */
+/* MATHJAX                                                                   */
+/* ========================================================================= */
+/* This fixes an issue where the tops of some symbols in an equation where clipped */
+code.has-jax span {
+  clip: unset !important; }
+
+/* Should be rem, not em here! */
+code.has-jax span {
+  /* Disabled this as it was creating rendering issues with latex subscript/superscript */
+  /* font-size: 0.8rem !important; */ }
+
+/* ========================================================================= */
+/* BLOCK QUOTES                                                              */
+/* ========================================================================= */
+blockquote {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 1em;
+  padding-left: 1em;
+  border-left: 3px solid #ccc; }
+
+@media (min-width: 800px) {
+  blockquote {
+    margin-left: 50px;
+    padding-left: 15px; } }
+
+/* markdown wraps the text inside a p element */
+blockquote p {
+  font-size: 1em; }
+
+@media (min-width: 800px) {
+  blockquote p {
+    font-size: 1.2rem; } }
+
+/* ========================================================================= */
+/* PAGINATION                                                                */
+/* ========================================================================= */
+/* Pagination HTML is created with the Hugo template: {{ template "_internal/pagination.html" . }} */
+ul.pagination {
+  width: 100%;
+  padding: 0;
+  /* Add some vertical margin */
+  margin: 1em 0;
+  /* Display page numbers and arrows in row, not column */
+  display: flex;
+  justify-content: center;
+  /* Hide the bullets */
+  list-style-type: none; }
+
+ul.pagination li {
+  /* Add space between each number and arrow */
+  margin-left: 0.5em;
+  margin-right: 0.5em; }
+
+/* ========================================================================= */
+/* POST STYLING                                                              */
+/* ========================================================================= */
+/* Disable link styling for post titles */
+.post-title {
+  text-decoration: none;
+  color: inherit; }
+
+article {
+  /* This forces content to stay within the bounds of the article element and wrap if needed */
+  width: 100%; }
+
+/* ========================================================================= */
+/* MAIN PAGE STYLING                                                         */
+/* ========================================================================= */
+html {
+  height: 100%; }
+
+/*body {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(241, 241, 241);
+}
+@media (min-width: 800px) {
+    body {
+        height: 100%;        
+        flex-direction: row;        
+    }
+}*/
+/* .left-column-outer {
+    width: 100%;
+    margin: auto;
+    display: flex;     
+    flex-direction: column;
+    align-items: center; 
+    
+}
+@media (min-width: 800px) {
+    .left-column-outer {
+        width: 30%;
+        max-width: 450px;
+    }
+}
+
+.left-column {
+    width: 90%;
+    margin-top: 1em;
+} */
+/* Left column contains logo and menu */
+/* @media (max-width: 800px) {
+    .left-column {
+        min-height: 100%;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: space-around;
+
+        background-color: white;
+        box-shadow: 0 0 1px rgba(0, 0, 0, 0.15); 
+    }
+
+    .header-section-2 {
+        margin: 1.0em;
+        flex-grow: 2;
+    }
+
+    .header-section-3 {
+        display: none;
+    }
+}
+
+@media (min-width: 800px) {
+    .left-column {
+        min-height: 100%;
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        justify-content: flex-start;
+
+        background-color: white;
+
+        box-shadow: 0 0 1px rgba(0, 0, 0, 0.15); 
+    }
+} */
+/* ========================================================================= */
+/* RECENT UPDATES                                                            */
+/* ========================================================================= */
+div.recent-updates {
+  margin: 1em;
+  display: flex;
+  flex-direction: column; }
+
+div.recent-updates .link {
+  text-decoration: none; }
+
+div.recent-updates .item {
+  border: solid 1px rgba(100, 100, 100, 0.5);
+  border-radius: 5px;
+  margin: 10px 0px;
+  padding: 5px;
+  /* Keep width sensible for left column (when is desktop mode) */
+  width: 250px; }
+
+div.recent-updates .item:hover {
+  background-color: #e6e6e6; }
+
+div.recent-updates h2 {
+  font-size: 1.0em;
+  margin: 0px;
+  margin-left: 10px; }
+
+div.recent-updates .modified {
+  font-size: 0.7em;
+  margin: 0px;
+  margin-left: 10px;
+  font-style: italic; }
+
+div.recent-updates .description {
+  font-size: 0.8em;
+  margin: 0px;
+  margin-left: 10px; }
+
+/* ========================================================================= */
+/* RIGHT COLUMN                                                              */
+/* ========================================================================= */
+.right-column {
+  width: 100%; }
+
+@media (min-width: 800px) {
+  .right-column {
+    width: 70%; } }
+
+/* Right column contains page content */
+.right-column {
+  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-flow: column;
+  align-items: center; }
+
+.inner-right-column {
+  width: 90%;
+  max-width: 900px;
+  margin-top: 1em;
+  background-color: white;
+  /* Add subtle border to right-hand content */
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
+  /* Stops long URLs and strings going of the right-hand side of the column */
+  word-break: break-word; }
+
+/* Padding between border of right-hand inner column and content */
+main {
+  padding: 5vw; }
+
+@media (min-width: 800px) {
+  main {
+    padding: 80px; } }
+
+.homepage-post-content {
+  padding-bottom: 50px; }
+
+/* Add a bit of space below the footer before the page ends */
+footer {
+  padding-bottom: 20px; }
+
+/* ========================================================================= */
+/* IMAGE STYLING                                                             */
+/* ========================================================================= */
+figure {
+  /* Setting these margins to 0 fixes the issue where the user agent stylesheet would set them to
+    40px and prevent the images for spanning the entire width of the content div */
+  margin-inline-start: 0;
+  margin-inline-end: 0; }
+
+figure img {
+  width: 100%;
+  /* Force images to stay within the confines of the parent container */ }
+
+/* ========================================================================= */
+/* PROMPTS                                                                   */
+/* ========================================================================= */
+aside.prompt {
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  border-left-width: 4px;
+  border-left-style: solid;
+  border-radius: 2px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box; }
+
+aside.prompt .title {
+  font-weight: 700;
+  padding-left: 1em; }
+
+aside.prompt .title .title-text {
+  padding-left: 1em; }
+
+aside.prompt div.content {
+  margin: 0;
+  padding-left: 1em; }
+
+aside.prompt div.content p {
+  margin: 0;
+  padding: 0.8em;
+  font-size: 0.8em; }
+
+/* QUESTION */
+aside.question {
+  border-left-color: #64dd17; }
+
+aside.question .title {
+  background-color: rgba(100, 221, 23, 0.1); }
+
+aside.question .title .icon {
+  color: #64dd17; }
+
+/* WARNING */
+aside.warning {
+  border-left-color: #ff9100; }
+
+aside.warning .title {
+  background-color: rgba(255, 145, 0, 0.1); }
+
+aside.warning .title .icon {
+  color: #ff9100; }
+
+/* NOTE */
+aside.note {
+  border-left-color: #651fff; }
+
+aside.note .title {
+  background-color: rgba(101, 31, 255, 0.1); }
+
+aside.note .title .icon {
+  color: #651fff; }
+
+/* ========================================================================= */
+/* DISQUS STYLING                                                             */
+/* ========================================================================= */
+/* Divider between the end of the page/related content/tags and the start of the Disqus comments */
+.disqus-divider {
+  height: 30px; }
+
+/* ========================================================================= */
+/* MENU STYLING                                                         */
+/* ========================================================================= */
+/* ========================================================================= */
+/* FOOTER                                                                    */
+/* ========================================================================= */
+/* Footer contains copyright and "Powered by Hugo" */
+footer {
+  width: 100%;
+  display: flex;
+  justify-content: center; }
+
+/* ========================================================================= */
+/* MATRIX (using a table)                                                    */
+/* ========================================================================= */
+/* This adds matrix looking brackets to the side of the table */
+.matrix {
+  position: relative; }
+
+.matrix:before, .matrix:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  border: 1px solid #000;
+  width: 6px;
+  height: 100%; }
+
+.matrix:before {
+  left: -6px;
+  border-right: 0px; }
+
+.matrix:after {
+  right: -6px;
+  border-left: 0px; }
+
+table.matrix tr:nth-of-type(even) {
+  background: white; }
+
+table.matrix tr:nth-of-type(odd) {
+  background: white; }
+
+.matrix td {
+  padding: 5px;
+  text-align: center; }
+
+.matrix {
+  border-spacing: 0px; }
+
+.matrix td {
+  width: 2em; }
+
+/* ========================================================================= */
+/* CALCULATORS                                                               */
+/* ========================================================================= */
+.calculator input {
+  width: 6em;
+  height: 1.5em; }
+
+.calculator table tr:nth-of-type(even) {
+  background: white; }
+
+.calculator table tr:nth-of-type(odd) {
+  background: white; }
+
+/* ========================================================================= */
+/* HBOX and VBOX                                                             */
+/* ========================================================================= */
+/* Handy hbox and vbox elements that can be used around the site to layout child
+elements */
+div.hbox {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center; }
+
+div.vbox {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center; }
+
+/* ========================================================================= */
+/* STRIKE-TRHOUGH (DEL)                                                      */
+/* ========================================================================= */
+del {
+  text-decoration: line-through;
+  background-color: #fbb;
+  color: #555; }
+
+/* ========================================================================= */
+/* REFERENCES                                                                */
+/* ========================================================================= */
+#return-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: black;
+  background: rgba(0, 0, 0, 0.7);
+  width: 50px;
+  height: 50px;
+  display: block;
+  text-decoration: none;
+  -webkit-border-radius: 35px;
+  -moz-border-radius: 35px;
+  border-radius: 35px;
+  display: none;
+  -webkit-transition: all 0.3s linear;
+  -moz-transition: all 0.3s ease;
+  -ms-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease; }
+
+#return-to-top i {
+  color: #fff;
+  margin: 0;
+  position: relative;
+  left: 16px;
+  top: 13px;
+  font-size: 19px;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -ms-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease; }
+
+#return-to-top:hover {
+  background: rgba(0, 0, 0, 0.9); }
+
+#return-to-top:hover i {
+  color: #fff;
+  top: 5px; }
+
+@media (min-width: 768px) {
+  .bd-sidebar {
+    position: sticky !important;
+    top: 0;
+    height: 100vh; } }
+
+p, li, div, td, th, input, code.has-jax {
+  line-height: 1.7;
+  color: var(--text-color); }
+
+.header-section-1 {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  flex-grow: 0; }
+
+.logo-img {
+  width: 70%;
+  /* max-width prevents image getting too large when on mobile device */
+  max-width: 300px; }
+
+.logo-img img {
+  width: 100%; }
+
+.site-title {
+  color: #333333;
+  font-size: 5vw;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  text-align: center; }
+
+@media (min-width: 768px) {
+  .site-title {
+    font-size: 24px; } }
+
+.site-title a {
+  text-decoration: none;
+  color: inherit; }
+
+.site-description {
+  color: #333333;
+  font-size: 3vw;
+  font-weight: 400;
+  margin-top: 7px;
+  width: 90%;
+  text-align: center; }
+
+@media (min-width: 768px) {
+  .site-description {
+    font-size: 1.0rem; } }
+
+/* ========================================================================= */
+/* MENU                                                                      */
+/* ========================================================================= */
+.menu-nav {
+  display: block !important;
+  padding-left: .25rem;
+  margin-left: -.25rem;
+  overflow-y: auto;
+  margin-top: 10px; }
+  .menu-nav ul ul {
+    margin-left: 5px; }
+  .menu-nav a {
+    padding: .375rem .75rem;
+    margin-top: .125rem;
+    margin-left: 0.1rem;
+    color: #3c3c3c;
+    font-size: 1.2em;
+    text-decoration: none; }
+  @media (min-width: 768px) {
+    .menu-nav a {
+      font-size: 0.9em; } }
+.menu-list {
+  list-style-type: none;
+  margin-left: 0px;
+  padding-left: 20px; }
+  .menu-list .menu-list {
+    padding-left: 5px; }
+
+.menu-chevron-link-wrapper {
+  display: flex; }
+
+.menu-chevron {
+  display: inline;
+  content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+  transition: transform 0.35s ease;
+  cursor: pointer; }
+  .menu-chevron.show {
+    transform: rotate(90deg); }
+  .menu-chevron.hidden {
+    visibility: hidden; }
+
+/* ========================================================================= */
+/* HOMEPAGE CONTENT                                                          */
+/* ========================================================================= */
+.col-centered {
+  float: none;
+  margin: 0 auto; }
+
+#recent-posts h1 {
+  font-size: 1.5em;
+  margin-bottom: 20px; }
+
+/* ========================================================================= */
+/* TOC                                                                       */
+/* ========================================================================= */
+@media (min-width: 768px) {
+  #right-hand-column {
+    height: 100vh;
+    position: sticky;
+    top: 0; } }
+
+#toc {
+  margin-top: 50px;
+  margin-bottom: 15px; }
+  #toc a {
+    text-decoration: none;
+    font-size: 0.8em; }
+  #toc ul {
+    list-style-type: none;
+    padding-inline-start: 20px; }
+  #toc li {
+    line-height: 1.5; }
+
+/* ========================================================================= */
+/* MAIN CONTENT (center column)                                              */
+/* ========================================================================= */
+article {
+  padding-top: 20px; }
+  article address {
+    display: inline; }
+
+.home-page-content {
+  padding-top: 40px; }
+
+/* ========================================================================= */
+/* HEADING AND PARAGRAPH STYLING                                             */
+/* ========================================================================= */
+p, h1, h2, h3, ul, li, a, div, td, th, input {
+  font-family: 'avenir next' ,'avenir', sans-serif;
+  word-break: break-word; }
+
+h1 {
+  font-size: 2.5em;
+  font-weight: bold; }
+
+h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+  border-bottom: 4px solid var(--main-color);
+  width: 100%;
+  padding-bottom: 3px; }
+
+h3 {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 1.0em; }
+
+h4 {
+  font-size: 1em;
+  font-weight: bold; }
+
+.flex-right {
+  display: flex;
+  justify-content: flex-end; }
+
+div.sect2 {
+  margin-bottom: 10px; }
+
+/* ========================================================================= */
+/* POST/PAGE METADATA                                                        */
+/* ========================================================================= */
+.published-modified-wrapper {
+  margin-bottom: 2.0em; }
+
+/* ========================================================================= */
+/* MATHJAX                                                                   */
+/* ========================================================================= */
+code.has-jax {
+  font-size: 1em; }
+
+/* ========================================================================= */
+/* CODE                                                                      */
+/* ========================================================================= */
+pre, .pre {
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* overflow:   scroll; */ }
+
+pre {
+  background-color: #222;
+  color: #ddd;
+  white-space: pre;
+  hyphens: none;
+  position: relative;
+  margin-bottom: 0px; }
+
+/* Styling for inline code (no pre element). Make sure not to select code elements
+which have the class `has-jax`, as this is used for inline math and MathJAX
+rendering.
+*/
+code:not(.has-jax) {
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border: 1px solid #BCBEC0;
+  padding: 2px; }
+
+pre code:not(.has-jax) {
+  display: block;
+  padding: 1.5em 1.5em;
+  white-space: pre;
+  font-size: 0.8em;
+  line-height: 2;
+  border: 0px; }
+
+@media (min-width: 800px) {
+  pre code:not(.has-jax) {
+    font-size: .876rem; } }
+
+div.highlight > div > table > tbody > tr > td:nth-child(1) > pre > code > span {
+  margin-right: 0 !important;
+  padding: 0 !important; }
+
+/* ========================================================================= */
+/* TABLES
+/* ========================================================================= */
+.table-wrapper {
+  overflow-x: auto; }
+
+/* Center tables inside page content */
+div.content table {
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1.1rem;
+  /* The right-column has break-word set to stop long strings/URLs from going off the side
+    of the page. We need to however set word-break back to normal here otherwise column sizes
+    look weird */
+  word-break: normal;
+  border-collapse: collapse;
+  /* Add spacing at bottom before next element in page content */
+  margin-bottom: 1em; }
+
+div.content th {
+  background-color: var(--main-color);
+  color: white;
+  font-weight: normal;
+  padding: 10px; }
+  div.content th p {
+    color: white; }
+
+div.content td, div.content th {
+  /* O.k. size on mobile */
+  font-size: 2.5vw;
+  border: 1px solid #d2d2d2; }
+
+@media (min-width: 800px) {
+  div.content {
+    /* Make tabular data a little smaller than standard paragraphs */ }
+    div.content td, div.content th, div.content td ul li, div.content td p, div.content th p {
+      font-size: 0.95rem;
+      line-height: 1.5; } }
+
+div.content td ul {
+  padding-inline-start: 8px; }
+
+div.content td {
+  padding: 10px; }
+
+div.content td ul {
+  display: inline-block;
+  /* This makes list identifiers look good within table cells when contents are centered */ }
+
+div.content td li {
+  text-align: left;
+  /* Left aligns text in lists */ }
+
+/* OK, WARNING AND ERROR ROWS IN A TABLE */
+div.content tr.ok {
+  background-color: #d7fcd3; }
+
+div.content tr.warning {
+  background-color: #f5f5d3; }
+
+div.content tr.error {
+  background-color: #ffe3e3; }
+
+table.code th, table.code td {
+  font-family: monospace; }
+
+/* UNSTYLED TABLES (for layout) */
+table.unstyled > tbody > tr > td {
+  padding: 0px;
+  background-color: transparent;
+  border: none; }
+
+/* AsciiDoc wraps all text within list elements in a p element, let's get rid of
+margin block start and end values (set by user agent stylesheet)
+so the list elements do not have too much vertical padding between items. */
+ul li p, ol li p {
+  margin-block-start: 0;
+  margin-block-end: 0; }
+
+.tableblock td {
+  padding: 10px; }
+  .tableblock td p {
+    line-height: 1.0;
+    margin: 0; }
+
+caption.title {
+  color: var(--caption-font-color);
+  font-size: 0.9em;
+  font-style: italic;
+  font-weight: var(--caption-font-weight); }
+
+.overflow {
+  overflow-x: auto; }
+
+.table-800 {
+  width: 800px; }
+
+.table-1000 {
+  width: 1000px; }
+
+.table-1200 {
+  width: 1200px; }
+
+/* ========================================================================= */
+/* IMAGES                                                                    */
+/* ========================================================================= */
+.imageblock {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  /* Make image caption text a little smaller than the main paragraph text and make
+    it italic */
+  /* This centers the image */ }
+  .imageblock .title {
+    font-size: 0.8em;
+    font-style: italic;
+    text-align: center; }
+  .imageblock .content {
+    display: flex;
+    justify-content: center; }
+  .imageblock img {
+    max-width: 100%; }
+
+.imagerow {
+  display: flex;
+  justify-content: center; }
+  .imagerow .content {
+    display: flex; }
+
+/* Disable automatic heading numbering because AsciiDoc will
+do this for us */
+.content .sect1 h2::before {
+  counter-reset: unset;
+  content: none; }
+
+.content .sect1 h3::before {
+  counter-reset: unset;
+  content: none; }
+
+.content .sect1 h4::before {
+  counter-reset: unset;
+  content: none; }
+
+.admonitionblock {
+  margin-top: 1em;
+  margin-bottom: 1em; }
+  .admonitionblock.tip {
+    background-color: #e6ffe6; }
+  .admonitionblock.note {
+    background-color: #fcfced; }
+  .admonitionblock.warning {
+    background-color: #ffe6e6; }
+  .admonitionblock table tbody tr {
+    background-color: transparent !important; }
+  .admonitionblock td {
+    line-height: 1.7 !important; }
+
+.admonitionblock-md {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  display: flex;
+  outline: 1px solid silver; }
+  .admonitionblock-md .icon {
+    width: 65px;
+    padding: 10px;
+    outline: 1px solid silver;
+    display: flex;
+    justify-content: center;
+    align-items: center; }
+  .admonitionblock-md .content {
+    margin: 10px;
+    align-items: center; }
+  .admonitionblock-md.tip {
+    background-color: #e6ffe6; }
+  .admonitionblock-md.note {
+    background-color: #fcfced; }
+  .admonitionblock-md.warning {
+    background-color: #ffe6e6; }
+
+.text-center {
+  text-align: center; }
+
+.eq-vars p {
+  text-align: center;
+  font-size: 0.9rem; }
+
+/* ========================================================================= */
+/* CODE                                                                      */
+/* ========================================================================= */
+.listingblock .title {
+  color: var(--caption-font-color);
+  font-size: 1.0em;
+  font-style: italic;
+  font-weight: var(--caption-font-weight); }
+
+.listingblock pre.highlight {
+  color: black; }
+
+/* ========================================================================= */
+/* EXAMPLE BLOCKS                                                            */
+/* ========================================================================= */
+.exampleblock {
+  background-color: var(--example-bg-color);
+  padding: 10px;
+  margin-bottom: 20px; }
+  .exampleblock .title {
+    color: var(--caption-font-color);
+    font-size: 1.0em;
+    font-style: italic;
+    font-weight: var(--caption-font-weight); }
+
+/* ========================================================================= */
+/* BIBLIOGRAPHY                                                              */
+/* ========================================================================= */
+a[href^="#bib"] {
+  font-size: 70%;
+  margin: left;
+  vertical-align: .5em; }
+
+ul.bibliography li p {
+  font-size: 0.9em; }
+
+/* ========================================================================= */
+/* AUTHOR CARDS                                                              */
+/* ========================================================================= */
+.author-card {
+  display: flex; }
+  .author-card img {
+    margin-right: 10px; }
+
+/* ========================================================================= */
+/* POSITIVES/NEGATIVES                                                       */
+/* ========================================================================= */
+span.pro {
+  color: green; }
+
+span.con {
+  color: var(--main-color); }
+
+/* ========================================================================= */
+/* GOOD/OK/BAD                                                               */
+/* ========================================================================= */
+.good {
+  color: green;
+  font-weight: bold; }
+
+.ok {
+  color: orange;
+  font-weight: bold; }
+
+.bad {
+  color: var(--main-color);
+  font-weight: bold; }
+
+/* ========================================================================= */
+/* CIRCUITJS                                                                 */
+/* ========================================================================= */
+.circuitjs-container {
+  padding: 20px; }
+  .circuitjs-container iframe {
+    margin-bottom: -30px; }
+
+/* ========================================================================= */
+/* WORKED EXAMPLES                                                           */
+/* ========================================================================= */
+.worked-example {
+  background-color: var(--main-color-light);
+  padding: 1em;
+  margin-bottom: 1em; }
