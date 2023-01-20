@@ -169,6 +169,9 @@ where:
 
 sudo tar -czvf arm-linux-gnueabihf.tar.gz arm-linux-gnueabihf
 
+To list what is in a tar file:
+tar --list -f <file.tar.gz.
+
 To test input events
 ---------------------
 Try typing the following at the terminal:
@@ -995,3 +998,16 @@ jobs -l
 
 Then can use "kill" to stop an application.
 
+Empty the trash
+----------------
+install:
+sudo apt install trash-cli
+
+run:
+trash-empty
+trash-list
+trash-rm
+trash-put
+trash-restore
+
+check the man page for all the options
