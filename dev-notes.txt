@@ -292,7 +292,13 @@ Add to change layout:
 Add to change shape:
     DAP_PATTERN_QUEUE [shape=box];
 
+errno app
+---------
+This app returns text explaining what an errno value is.
+sudo apt-get install errno
 
+to use:
+    errno <error number>
 
 gdb debugger
 --------------
@@ -314,7 +320,6 @@ p/x [array name]
 
 setting a break condition:
 break <filename.c>:<line number> <condition>
-break icorrupt.c:30 if(x>255)
 break icorrupt.c:30 if x>255
 
 Can use a TUI in gdb
@@ -421,15 +426,16 @@ If connection is refused:
 check if ssh is installed:
     ssh
 
-if its not installed, install it:
-    sudo apt install openssh-client
+if its not installed, loggin as root and install it:
+    apt install openssh-client
+    apt install openssh-server
 
 ssh server may not be running, see if it is running this:
     sudo service ssh status
 
 Could be that the port is closed, usually ssh is on port 22.
 to check which port ssh server is being run on:
-    grep Port /etc/ssh/sshd_config
+    cat /etc/ssh/sshd_config | grep Port
 
 see if ssh daemon is running on target
     systemctl status sshd
@@ -451,7 +457,8 @@ Open this file:
 look for:
     PermitRootLogin no
 
-uncomment it and change it to yes
+uncomment it and change it to yes, then reboot
+    reboot
 
 temp files
 -----------
@@ -549,6 +556,27 @@ curl for putting together ethernet coms that is "easy" to do
 Include <curl/curl.h> at the top of your file
 
 ifconfig to get ip address
+
+netcat, nc
+--------------
+applications used to create a eithernet communication link between computer
+(does a lot more)
+
+On one termial set up the server
+    netcat -k -l <port>
+    netcat -k -l 4444
+    nc -k -l 4444
+
+where:
+-k = stay up if connection is localhost
+-l = listen
+
+On the other terminal:
+    netcat 127.0.0.1 <port.
+    netcat 127.0.0.1 4444
+    nc 127.0.0.1 4444
+
+This is an example of a loop back
 
 sh script
 ------------
@@ -938,10 +966,49 @@ X, X11
 
 To start xserver:
     startx
+To start xserver on tty3
+(x starts counting at 0, tty's start counting at 1)
+startx -- :2
 
 To check if xserver is running, try running one of these x programs:
     xeyes
     xclock
+
+For debian:
+https://wiki.debian.org/Xorgw
+
+search on "install debian x" or Xorg
+
+sudo apt install xorg
+
+openGL
+--------
+
+To install (debian?)
+sudo apt-get install libgl1-mesa-dev
+
+My also want to get:
+sudo apt-get install libglu1-mesa-dev
+sudo apt-get install freeglut3-dev
+
+Xcursor
+---------
+
+To install (debian?)
+
+sudo apt-get install libxcursor-dev
+sudo apt-get install xcursor-themes
+
+After all the installs, clear the cmake cache becuase it is most likely not updated.
+The easiest way to do this is just delete the build directory and then make a new build directory,
+and rerun cmake.
+
+DAP Project
+------------
+To install:
+
+git clone http://bitbucket.generaldigital.com:7990/scm/dap/dap.git -b dev
+
 
 Adding displays in linux
 -------------------------
