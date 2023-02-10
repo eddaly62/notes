@@ -460,6 +460,13 @@ look for:
 uncomment it and change it to yes, then reboot
     reboot
 
+While editing sshd_config, turn on X11 forwarding:
+    X11Forwarding yes
+    X11DisplayOffset 10
+    X11UseLocalhost no
+
+And make sure xauth program is installed or you will not be able to forward packets.
+
 temp files
 -----------
 mkstemp() to make a temporary file
@@ -1086,3 +1093,37 @@ df -H
 This gives disk space in human terms.
 Can also be usd to see what media has been attached and wether it has been mounted.
 
+Domian Name Server (DNS) Set Up
+--------------------------------
+File:
+/etc/resolv.conf
+
+Add line:
+    nameserver 8.8.8.8
+or
+    nameserver 1.1.1.1
+
+vi
+----------
+To show line numbers:
+    set number
+
+To not show line numbers:
+    set nonumber
+
+ESC : i -> insert
+ESC : x -> delete character
+ESC : a -> append
+ESC : wq -> save and quit
+ESC : q -> quite
+
+cmake
+-------
+Setting a variable on the command line
+    cmake -DVARIABLE path/to/source
+
+Unsetting a variable on the command line
+    cmake -UVARIABLE path/to/source
+
+Note: its -D or -U with the variable name right after it with no spaces
+D is define, U is for undefined
