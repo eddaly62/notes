@@ -1,3 +1,17 @@
 Yocto Notes
 -------------
 
+uboot
+-------
+
+printenv - to print uboot variables
+
+for LEC_imX6:
+remove jumper on B.SEL0
+Press space bar when prompted, before uboot tries to load from emmc or flash.
+change to
+boot_sd=LOAD='fatload mmc 1:1'; BOOTARGS='mmcb1k1p2 ro '; run boot
+then
+run boot_sd
+
+
