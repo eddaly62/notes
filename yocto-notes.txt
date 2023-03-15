@@ -15,3 +15,10 @@ then
 run boot_sd
 
 
+tools for deploying image
+--------------------------
+
+dd
+
+bmaptool
+
