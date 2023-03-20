@@ -231,6 +231,17 @@ Use the cat command to listen for incoming data on the serial port:
 
 	cat < /dev/ttymxc1 &
 
+if the received data is in hex, try this:
+
+    cat /dev/ttyS1 | hexdump
+
+    show recieved data in conical mode, seems to update display when every 16 bytes are received
+    cat < /dev/ttyS1 | hexdump -C
+
+if in octal, try this:
+
+    cat /dev/ttyS1 | od
+
 Write to the serial port. The characters sent will be printed back to you in the next line:
 
 	echo "Testing UART" > /dev/ttymxc1
