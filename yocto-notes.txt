@@ -32,3 +32,12 @@ change to
 boot_sd=LOAD='fatload mmc 1:1'; BOOTARGS='mmcb1k1p2 ro '; run boot
 then
 run boot_sd
+
+
+tools for deploying image
+--------------------------
+
+dd
+
+bmaptool
+
