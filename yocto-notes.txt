@@ -37,7 +37,11 @@ run boot_sd
 tools for deploying image
 --------------------------
 
+balena etcher - burn an image to usb or sd card
+
+rufus - burn an image to a usb or sd card
+
 dd
 
-bmaptool
+bmaptool - linux tool to burn an image to an sd card
 
