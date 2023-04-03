@@ -1,6 +1,25 @@
 Yocto Notes
 -------------
 
+To search for a recipe:
+    bitbake-layers show-recipes <recipe>
+
+To search for a variable in a recipe:
+    bitbake -e <recipe> | grep <variable>
+example:
+    bitbake -e gdcfonts | grep ^WORKDIR=
+
+To clear a recipe:
+    bitbake -c cleanall <recipe>
+example:
+    bitbake -c cleanall gdcfonts
+
+To bake only one recipe:
+    bitbake <recipe>
+exampe:
+    bitbake gdcfonts
+
+
 uboot
 -------
 
@@ -13,5 +32,3 @@ change to
 boot_sd=LOAD='fatload mmc 1:1'; BOOTARGS='mmcb1k1p2 ro '; run boot
 then
 run boot_sd
-
-
