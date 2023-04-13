@@ -367,12 +367,36 @@ sometimes r doesn't work, try using c instead
 
 For debugging forks and exec:
 type:
-set follow-fork-mode child
-set follow-fork-mode parent
-run
+    set follow-fork-mode child
+    set follow-fork-mode parent
+    run
 
-set follow-exec-mode new
-run
+    set follow-exec-mode new
+    run
+
+threads:
+
+print information on threads
+    info threads
+
+follow thread 1 (its the number you see when you did a info threads)
+    thread 1
+
+follow thread 2
+    thread 2
+
+watch a variable
+    watch cnt>=4500
+
+break point in a specific thread
+for example break on event_count_to_big in thread 2
+    break event_count_to_big thread 2
+
+apply to all threads (can be used with all commands)
+    thread apply all bt
+
+note: lwp means light weight process
+
 
 core dumps
 -----------
