@@ -254,6 +254,14 @@ Termios, the Unix API for terminal I/O will be employed.
 
 An example will be introduced step-by-step. First of all, include some libraries and initialize variables:
 
+setserial
+-----------
+
+Getting serial port info:
+    setserial -g /dev/ttyS1
+prints:
+    tty path, type, port, irq
+
 
 Graph - Dot
 --------------
