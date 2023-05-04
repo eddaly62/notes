@@ -263,6 +263,29 @@ prints:
     tty path, type, port, irq
 
 
+tty conflict
+--------------
+In the event that there is a conflict with your apps tty port (that should be free) and the system using it, try the following:
+
+Use htop and filter for tty and see if system is using that tty in question.
+Try killing it and see if it relaunches.
+If it relaunches it, chances are that the systemctl services is restarting it.
+
+Check by:
+    systemctl --type=service --state=running
+
+This will bring up a list of services that are running.
+Look for the tty in question.
+
+To stop that tty from running,:
+    systemctl stop <tty service listed in left column>
+    systemctl stop serial-getty@ttyS1.service
+
+This should stop the tty.
+
+Confirm with htop.
+
+
 Graph - Dot
 --------------
 To install:
