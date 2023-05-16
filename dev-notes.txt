@@ -721,6 +721,9 @@ To see the section table:
 To disassemble the pgm:
     objdump -d <pgm>
 
+To read the SONAME of a library:
+readelf -a <lib> | grep SONAME
+
 
 To remove al the symbols from a pgm:
     strip <pgm>
