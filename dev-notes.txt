@@ -652,6 +652,10 @@ On the other terminal:
 
 This is an example of a loop back
 
+tftp
+------
+alternative to netcat
+
 sh script
 ------------
 start with the following on the first line:
