@@ -656,6 +656,13 @@ tftp
 ------
 alternative to netcat
 
+
+serial terminal tools/programs
+-------------------------------
+AccessPort - by SUDT, sudt.com (windows only) dated but works good, handles hex data well, has other rs232 software apps.
+Putty - versions for linux and windows, doesn't display hex values
+
+
 sh script
 ------------
 start with the following on the first line:
