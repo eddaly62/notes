@@ -646,7 +646,7 @@ where:
 -l = listen
 
 On the other terminal:
-    netcat 127.0.0.1 <port.
+    netcat 127.0.0.1 <port>
     netcat 127.0.0.1 4444
     nc 127.0.0.1 4444
 
@@ -655,6 +655,10 @@ This is an example of a loop back
 tftp
 ------
 alternative to netcat
+
+wget
+------
+gets a file over the internet
 
 
 serial terminal tools/programs
