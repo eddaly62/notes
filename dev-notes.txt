@@ -739,6 +739,8 @@ To disassemble the pgm:
 To read the SONAME of a library:
 readelf -a <lib> | grep SONAME
 
+To list the shared libraries used in a program:
+readelf -a <pgm> | grep Shared
 
 To remove al the symbols from a pgm:
     strip <pgm>
