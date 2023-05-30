@@ -1212,3 +1212,10 @@ Unsetting a variable on the command line
 
 Note: its -D or -U with the variable name right after it with no spaces
 D is define, U is for undefined
+
+make
+-----
+Make has lot of internal settings that will help you make a simplistic program with out writing a make file.
+To see these settings, type:
+
+    make -p
