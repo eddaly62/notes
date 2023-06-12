@@ -281,6 +281,9 @@ To stop that tty from running,:
     systemctl stop <tty service listed in left column>
     systemctl stop serial-getty@ttyS1.service
 
+To mask service so it doesn't restart after a reset:
+    systemctl mask serial-getty@ttyS1.service
+
 This should stop the tty.
 
 Confirm with htop.
