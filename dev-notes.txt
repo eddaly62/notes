@@ -1224,3 +1224,13 @@ Make has lot of internal settings that will help you make a simplistic program w
 To see these settings, type:
 
     make -p
+
+atomic variables in C
+---------------------
+Available in C11 version
+to check if atomic is supported, add:
+
+#if __STDC_VERSION__ < 201112L || __STDC_NO_ATOMICS__ == 1
+#error "Help! Atomics not supported"
+#endif
+
