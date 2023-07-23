@@ -1234,3 +1234,33 @@ to check if atomic is supported, add:
 #error "Help! Atomics not supported"
 #endif
 
+tmux
+-----
+A terminal multiplexer
+Can set up terminal windows vertical or horizonital.
+
+Ctrl b + % - create a vertical windows
+Ctrl b + " - create a horizontal windows
+Ctrl b + right arrow - switch to right window
+Ctrl b + left arrow - switch to left window
+Ctrl b + x - to stop program in window (like ctrl c)
+Type exit to close window
+
+help to see all the hot key sequences
+
+Using valgrind with gdb
+------------------------
+In one window we are going to attach valgrind to gdb
+    valgrind --vgdb=error=0 <program>
+
+Compile program with -g flag
+
+In gdb type the following:
+    target remote | /usr/bin/vgdb --pid=<pid of valgrind>
+
+This attaches valgrind to gdb
+When a memory error is detected, you will see the details reported in the valgrind window.
+
+
+
+
