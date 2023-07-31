@@ -626,6 +626,7 @@ Files
 --------
 fstat() function to get file status
 mmap() to create a file in memory
+stat()
 
 Ethernet
 ---------
@@ -1262,5 +1263,12 @@ This attaches valgrind to gdb
 When a memory error is detected, you will see the details reported in the valgrind window.
 
 
+backups
+-----------
 
+For backups apps that can easily restore a file:
+    Kbackup
+
+Whole system backup and restore:
+    backups (in the ubuntu utilities area)
 
