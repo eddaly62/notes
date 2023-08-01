@@ -1059,6 +1059,9 @@ Pkgconfig:
 Libraries:
     /usr/local/lib
 
+Docs with the best content are on the liballegro.org site
+
+
 X, X11
 -------
 
