@@ -1275,3 +1275,12 @@ For backups apps that can easily restore a file:
 Whole system backup and restore:
     backups (in the ubuntu utilities area)
 
+get process name from process ID (PID)
+----------------------------------------
+To get the name:
+    ps -p <pid> -o comm=
+
+To get full command:
+    ps -p <pid> -o command
+
+
