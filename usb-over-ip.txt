@@ -1,0 +1,243 @@
+usb-over-ip.txt
+----------------
+
+on sparc board:
+change password.
+    sudo passwd root
+
+Change to a static ip address:
+    sudo nano /etc/dhcpcd.conf
+
+At bottom of file, add:
+
+    interface eth0
+    static ip_address=192.168.200.7/24
+    static routers=192.168.200.254
+    static domain_name_servers=1.0.0.2.1.1.1.2
+
+Save file and reboot:
+    sudo reboot now
+
+Switch user to root:
+    su -
+
+Install usbip:
+    apt install usbip
+
+Install kernel object:
+    modprobe usbip_host
+
+We want to make sure this gets installed every time we power up so copy it to the modules folder:
+    echo 'usbip_host' >> /etc/modules
+
+Software is now installed and ready to user.
+Now bind usb devices to the usbip server.
+
+To get a list of usb devices that we can bind:
+    usbip -list -list
+
+This will give you a list of devices with bus id's and vendor and product ID's
+for example:
+    - busid 1-1.2 (0781:5567)
+    SanDisk Corp. : Cruzer Blade (0781:5567)
+
+The (0781:5567) is the vendor id and product id.
+
+Server side
+-----------
+Now create two scripts, one that binds usb devices and one that unbinds the usb devices.
+
+The start script:
+nano /usr/sbin/usbip_start.sh
+
+add the following to the script
+
+#!/bin/bash
+
+usb1='0781:5567'
+usb2='0658:0200'
+
+/usr/sbin/usbip bind --$(/usr/sbin/usbip list -p -l | grep '#usbid='$usb1'#' | cut '-d#' -f1)
+/usr/sbin/usbip bind --$(/usr/sbin/usbip list -p -l | grep '#usbid='$usb2'#' | cut '-d#' -f1)
+
+Save the file and make it executable:
+    chmod +x /usr/sbin/usbip_start.sh
+
+The stop script:
+nano /usr/sbin/usbip_stop.sh
+
+add the following to the script
+
+#!/bin/bash
+
+usb1='0781:5567'
+usb2='0658:0200'
+
+/usr/sbin/usbip unbind --$(/usr/sbin/usbip list -p -l | grep '#usbid='$usb1'#' | cut '-d#' -f1)
+/usr/sbin/usbip unbind --$(/usr/sbin/usbip list -p -l | grep '#usbid='$usb2'#' | cut '-d#' -f1)
+killall usbipd
+
+Save the file and make it executable:
+    chmod +x /usr/sbin/usbip_stop.sh
+
+Now you have a script that starts and stops usbip.
+Test them out.
+
+To test startup...should see a bind device complete message on the display for each device you binded
+    . /usr/sbin/usbip_start.sh
+
+
+To test stop...should see a unbind device complete message on the display for each device
+    . /usr/sbin/usbip_stop.sh
+
+Create a service file:
+    nano /lib/systemd/system/usbipd.service
+
+add the following:
+
+[Unit]
+Description=usbip host daemon
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/sbin/usbipd -D
+ExecStartPost=/bin/bash -c '/usr/sbin/usbip_start.sh'
+ExecStop=/bin/bash -c 'usr/sbin/usbip_stop.sh'
+
+[Install]
+WantedBy=multi-user.target
+
+Now we want when our board starts up...we want to start the service and
+bind those usb devices to our usbip server then they will be available over the network.
+
+So we need to let the system know about the service we just created.
+    systemctl --system daemon-reload
+
+Now give a command that so that our service is allways loaded up when ever the system is rebooted:
+    systemctl enable usbipd.service
+
+Start our service:
+    systemctl start usbipd.service
+
+Check if everything is running okay:
+    systemctl status usbipd.service
+
+
+Client side
+--------------
+
+switch user to root:
+    su -
+
+See what usb devices are connected
+    lsusb
+
+Install the software:
+    apt install usbip hwdata usbutils -y
+
+Load the module for the client:
+    modprobe vhci-hcd
+
+Load whenever we boot up
+    echo 'vhci-hcd' >> /etc/modules
+
+Now create two script files, one to attach devices and one to detach devices
+
+To attach:
+
+    nano /usr/sbin/usbip_start.sh
+
+add the following:
+
+#!/bin/bash
+
+server1='192.168.200.7'
+usb1='0781:5567'
+usb2='0658:0200'
+
+/usr/sbin/usbip attach -r $server1 -b $(/usr/sbin/usbip list -r $server1 | grep $usb1 | cut -d: -f1)
+/usr/sbin/usbip attach -r $server1 -b $(/usr/sbin/usbip list -r $server1 | grep $usb2 | cut -d: -f1)
+
+Save and make execuatble:
+    chmod +x /usr/sbin/usbip_start.sh
+
+
+To detach:
+
+    nano /usr/sbin/usbip_stop.sh
+
+add the following:
+
+#!/bin/bash
+
+/usr/sbin/usbip detach --port=$(/usr/sbin/usbip port | grep '<Port in Use>' | sed -E 's/^Port ([0-9][0-9]).*/\1/')
+/usr/sbin/usbip detach --port=$(/usr/sbin/usbip port | grep '<Port in Use>' | sed -E 's/^Port ([0-9][0-9]).*/\1/')
+
+Save and make executable:
+    chmod +x /usr/sbin/usbip_stop.sh
+
+Test the start script:
+    . /usr/sbin/usbip_start.sh
+    usbip port
+
+Should say it imported devices from the server you jsut set up
+
+Test the stop script:
+    . /usr/sbin/usbip_stop.sh
+    usbip port
+
+Should show ports are detached
+
+Run lsusb
+Make sure the detached devices do not show up.
+Some older versions had issues fully detaching.
+
+Now create a service file for the client
+    nano /lib/systemd/system/usbip.service
+
+add:
+
+[Unit]
+Description=usbip client
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPost=/bin/bash -c '/usr/sbin/usbip_start.sh'
+ExecStop=/bin/bash -c 'usr/sbin/usbip_stop.sh'
+
+[Install]
+WantedBy=multi-user.target
+
+Save file
+
+Tell the system about the service file:
+    systemctl --system daemon-reload
+
+Set up to start service on boot:
+    systemctl enable usbip.service
+
+Start the service:
+    systemctl start usbip.service
+
+Check that the service is running:
+    systemctl status usbip.service
+
+Should say its loaded and active
+
+Check usb devices were imported:
+    usbip port
+
+Notes:
+1. Only one client can use usb device at a time
+2. Need to lock down the port used by the server side so no one can change the server settings remotely
+The port can be seen by typing:
+    usbip port
+3. Need to start the server before the client...the oposite for shutting down...
+before servicing the server...shut down the clients first.
+
+
+
+
