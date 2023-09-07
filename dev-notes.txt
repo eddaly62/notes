@@ -587,6 +587,12 @@ initialziing a repo:
 git config --global user.name "Ed Daly"
 git config --global user.email "edaly@generaldigital.com"
 
+To prune remote tracking branches: (i.e. remote/origin/branchname shows up locally but was deleted remotely) )
+git fetch --prune origin
+
+To delete a local branch
+git branch -d branchname
+
 source (linux)
 ----------------
 Can use "source" to execute a text file that contains linux commands
