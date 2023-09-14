@@ -33,6 +33,16 @@ boot_sd=LOAD='fatload mmc 1:1'; BOOTARGS='mmcb1k1p2 ro '; run boot
 then
 run boot_sd
 
+for the adlink imx8mp:
+booting from the SD card
+
+editenv mmcdev
+mmcdev = 1
+editenv mmcroot
+mmcroot = /dev/mmcblk1p2
+boot
+
+
 
 tools for deploying image
 --------------------------
