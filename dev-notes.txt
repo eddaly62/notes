@@ -1300,3 +1300,11 @@ https://sourceforge.net/projects/y-a-terminal/
 AccessPort
 Works only on MS Windows
 https://accessport.en.lo4d.com/windows
+
+
+CVE
+----
+Common Vulnerabilities and Exposures
+CVE Search Results to search for issues for a given library or app.
+cve.org
+
