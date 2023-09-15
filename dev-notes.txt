@@ -88,13 +88,20 @@ Programs to query apps and libraries
 
 nm <*.so>
 
+List symbols used in an object file
 Shows what is in a shared library
 
 ldd <pgm>
+ldd -v <pgm>    verbose listing
 
 Shows the libraries used by the program
+This will actual execute the code to find as many dependancies as possible
 
 scc
+scc --by-file
+scc --no-cocomo
+scc --no-complexity
+scc --no-duplicates
 
 Checks cyclomatic complexity and other stats for the current working directory
 
