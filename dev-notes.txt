@@ -600,6 +600,9 @@ git fetch --prune origin
 To delete a local branch
 git branch -d branchname
 
+To see all the branches
+git branch -a
+
 source (linux)
 ----------------
 Can use "source" to execute a text file that contains linux commands
