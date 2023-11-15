@@ -1330,3 +1330,9 @@ hi - Time spent handling hardware interrupt routines. (Whenever a peripheral uni
 si - Time spent handling software interrupt routines. (a piece of code, calls an interrupt routine...)
 st - Time spent on involuntary waits by virtual cpu while hypervisor is servicing another processor (stolen from a virtual machine)
 
+uname
+------
+Use to get ingormation on the kernel, machine, processor, etc.
+uname -a => print it all
+uname --help for all the options
+
